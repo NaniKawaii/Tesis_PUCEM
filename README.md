@@ -18,8 +18,9 @@
 | [`prototipo/`](prototipo/README.md) | Software del prototipo: cálculo de planetas, control de motores, interfaz web, registro de pruebas y corrección por IA |
 
 **En Google Drive** (carpeta de la tesis):
-- **"Artículo científico – versiones"**: la v1 (borrador original) y la v2 (Google Doc editable,
-  con figuras). El Word de la v2, con las ecuaciones del editor, está en `articulo/articulo_v2.docx`.
+- **"Artículo científico – versiones"**: la v1 (borrador original), la v2 y la v2.1
+  (Google Docs editables, con figuras; la v2.1 agrega la caja de control). El Word más reciente,
+  con las ecuaciones del editor, está en `articulo/articulo_v2.docx`.
 - **"Documentos del prototipo"**: el plan de trabajo, la guía del circuito, la guía de la
   montura y la lista de compras, como Google Docs.
 
