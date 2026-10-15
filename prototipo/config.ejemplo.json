@@ -3,7 +3,7 @@
   "gps_puerto": "/dev/serial0",
   "altitud_minima": 10,
   "sitio": { "latitud": -1.0546, "longitud": -80.4545, "elevacion_m": 50 },
-  "az":  { "micropasos": 16, "reduccion": 5.0, "vel_max": 900, "aceleracion": 600,
+  "az":  { "micropasos": 16, "reduccion": 14.0, "vel_max": 2000, "aceleracion": 1500,
            "min_grados": -270, "max_grados": 270,
            "pin_step": 17, "pin_dir": 27, "pin_enable": 22, "pin_fin_carrera": null },
   "alt": { "micropasos": 16, "reduccion": 5.0, "vel_max": 900, "aceleracion": 600,

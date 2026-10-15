@@ -8,7 +8,9 @@ from telescopio.config import cargar_config
 def test_config_ejemplo_con_reduccion():
     c = cargar_config("config.ejemplo.json")
     assert c.simulacion is False
-    assert c.az.reduccion == 5.0 and c.az.resolucion_arcmin == pytest.approx(1.35)
+    # corona de 280 dientes / polea de 20 (azimut) y polea de 100 / 20 (altitud)
+    assert c.az.reduccion == 14.0 and c.az.resolucion_arcmin == pytest.approx(0.482, abs=1e-3)
+    assert c.alt.reduccion == 5.0 and c.alt.resolucion_arcmin == pytest.approx(1.35)
     assert c.az.min_grados == -270  # los valores no indicados conservan el defecto
 
 

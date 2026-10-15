@@ -7,6 +7,11 @@ el campo**. Los precios son **estimaciones aproximadas** y deben cotizarse en Ec
 
 ## 1. Telescopio recomendado: Maksutov-Cassegrain de 90 mm
 
+> 🔭 **La montura es universal:** acepta cualquier telescopio liviano (≤ 3 kg) con cola
+> de milano tipo **Vixen**, o con pie de 1/4″-20 o anillas montados sobre la barra Vixen
+> impresa (ver [`montura/LEEME.md`](../montura/LEEME.md#5-compatibilidad-con-telescopios)).
+> El Maksutov 90 es el **telescopio de referencia** para las pruebas del artículo.
+
 **Primera opción:** Sky-Watcher **Skymax 90** (solo el tubo óptico, o "OTA"), o un
 equivalente como el Celestron C90 Mak o el Bresser Maksutov 90/1250.
 
@@ -24,8 +29,8 @@ equivalente como el Celestron C90 Mak o el Bresser Maksutov 90/1250.
 - **Es corto y liviano:** un tubo de 28 cm y 1,7 kg pone muy poca carga sobre las piezas de
   PETG y los motores, y se balancea fácilmente sobre el eje de altitud.
 - **Normalmente trae** buscador de punto rojo, diagonal y dos oculares, y se fija con una
-  **zapata de rosca 1/4″-20**, la misma de las cámaras. La placa de montaje del diseño usa esa
-  rosca, así que no hace falta comprar una cola de milano.
+  **zapata de rosca 1/4″-20**, la misma de las cámaras. Se atornilla a la barra Vixen
+  impresa, que entra en la mordaza universal de la montura.
 - **Si se importa:** caja de ~3 kg y menos de USD 400. Puede entrar por courier en la
   categoría 4×4; verifica las condiciones vigentes del régimen y la tasa.
 
@@ -36,8 +41,8 @@ equivalente como el Celestron C90 Mak o el Bresser Maksutov 90/1250.
 | Ocular de 25 mm (50×, ~52° aparente) | ≈ 1,0° (62′) | < ~30′ |
 | Cámara Raspberry Pi Camera Module 3 en foco primo (sensor de 6,45 × 3,63 mm) | ≈ 17,7′ × 10′ | **< ~5′** |
 
-Esto justifica cuantitativamente la reducción 5:1, que da 1,35′ por micropaso, y la
-corrección del error con IA. Con acople directo (6,75′ por paso) el planeta ni siquiera
+Esto justifica cuantitativamente las reducciones (14:1 en azimut, con 0,48′ por micropaso,
+y 5:1 en altitud, con 1,35′ por micropaso) y la corrección del error con IA. Con acople directo (6,75′ por paso) el planeta ni siquiera
 entraría de forma confiable en el campo de la cámara.
 
 ---
@@ -45,6 +50,12 @@ entraría de forma confiable en el campo de la cámara.
 ## 2. Diseño de montura recomendado: altacimutal de un brazo
 
 ![Concepto de la montura](img/montura-concepto.png)
+
+> ✅ **Las piezas imprimibles ya están diseñadas**, con medidas, archivos STL y guía de
+> armado, en [`montura/`](../montura/LEEME.md). Se verificó por computadora que no chocan
+> entre sí, incluso con el tubo girado de −5° a 90°.
+
+![Ensamble 3D](../montura/img/ensamble-iso.png)
 
 ### Idea general
 
@@ -57,18 +68,22 @@ entraría de forma confiable en el campo de la cámara.
    caja con la electrónica (Raspberry Pi, 2 TB6600, *step-down* y fusible). El **GY-91 va
    fijo a la base** para medir la nivelación del trípode, y el **GPS se monta afuera**, mirando
    al cielo.
-3. **Eje de azimut:** un **rodamiento giratorio tipo "lazy susan" de 150 mm** con un perno
-   central M8/M10 para centrar. Debajo del plato giratorio va una **polea GT2 grande de 100
-   dientes impresa**, y el motor fijo le transmite el giro con una polea de 20 dientes (5:1).
+3. **Eje de azimut:** un **rodamiento giratorio tipo "lazy susan" de 4″ (102 mm)**. El
+   borde del plato giratorio es una **corona GT2 de 280 dientes impresa** que el motor fijo
+   mueve con una polea de 20 dientes y una correa cerrada de 600 mm. La reducción es
+   **14:1** y da **0,48′ por micropaso**. No hace falta un eje central, y el centro queda libre
+   para pasar los cables.
 4. **Brazo:** **perfil de aluminio 2040** (unos 30 cm), unido con piezas de PETG. Es mucho
    más rígido que un brazo totalmente impreso. El **motor de altitud va abajo**, para mantener
    bajo el centro de gravedad, con ranuras para tensar la correa.
 5. **Eje de altitud:** varilla de acero de 8 mm sobre **2 rodamientos 608ZZ**. De un lado va
    la placa del telescopio y del otro la polea GT2 de 100 dientes (5:1). En el extremo del eje
    va un **imán diametral para el AS5600**, que mide el ángulo real de altitud.
-6. **Placa de montaje:** tornillo 1/4″-20 a la zapata del Maksutov, con una **ranura para
-   deslizar el tubo** hasta que quede balanceado. Si está balanceado, el motor casi no hace
-   fuerza y el tubo no cae al cortar la corriente.
+6. **Mordaza cola de milano Vixen (universal):** sirve para cualquier telescopio con barra
+   Vixen. Se aprieta con 2 tornillos y la barra se **desliza hasta que el tubo quede
+   balanceado**. Si está balanceado, el motor casi no hace fuerza y el tubo no cae al cortar
+   la corriente. Los telescopios con pie de 1/4″ o con anillas se montan sobre la barra
+   Vixen impresa.
 7. **Fines de carrera:** **2 en altitud** (−5°, para no chocar con la base, y 90°), conectados
    **en paralelo al mismo pin** (GPIO 6). En azimut no se pone interruptor: el software limita
    el giro a ±270° y el cable del motor de altitud se deja con holgura (1,5 vueltas).
@@ -81,13 +96,15 @@ entraría de forma confiable en el campo de la cámara.
 |---|---|
 | Material | **PETG**. El PLA se deforma al sol o dentro de un auto caliente |
 | Piezas estructurales | 4–5 perímetros, relleno del 40–60 % (gyroid) |
-| Poleas GT2 de 100 dientes impresas | Diámetro primitivo = 100 × 2 mm / π ≈ **63,7 mm**. Imprimir con capas de 0,12–0,16 mm |
-| Correa cerrada | Largo ≈ 2C + π(D + d)/2 + (D − d)²/4C, donde C es la distancia entre ejes. Con C = 120 mm sale ≈ 365 mm. Comprar la longitud estándar más cercana y ajustar C con las ranuras |
-| Reducción | 20T → 100T = **5:1**, es decir **1,35′ por micropaso** y hasta ~20°/s de velocidad de GoTo |
+| Poleas GT2 impresas | Diámetros primitivos: corona de 280T = **178,25 mm**; polea de 100T = **63,66 mm**. Imprimir primero la pieza de prueba |
+| Correas cerradas | **Azimut: 600 mm** (o 610). **Altitud: 280 mm** (o 300) |
+| Reducción | Azimut 14:1 (**0,48′** por micropaso, ~16°/s); altitud 5:1 (**1,35′** por micropaso, ~20°/s) |
+
+El detalle completo (piezas, orientación de impresión, tornillería y orden de armado) está
+en [`montura/LEEME.md`](../montura/LEEME.md).
 
 > 📌 **Tu diseño actual:** si me compartes capturas o los archivos (STL, STEP o el
-> proyecto de Fusion/SolidWorks/Onshape), lo comparo con este concepto y te digo qué
-> conservar y qué cambiar, en lugar de empezar de cero.
+> proyecto de Fusion/SolidWorks/Onshape), lo comparo con este diseño.
 
 ---
 
@@ -115,7 +132,7 @@ entraría de forma confiable en el campo de la cámara.
 | **Total típico** | **~15–20 W**, es decir **~7 h** con 12 Ah |
 | Con los TB6600 a 2,5 A | ~35 W, es decir ~4 h |
 
-➡️ **Configura los TB6600 en 1,5 A.** Con el telescopio balanceado y la reducción 5:1 sobra
+➡️ **Configura los TB6600 en 1,5 A.** Con el telescopio balanceado y las reducciones de 14:1 y 5:1 sobra
 torque (~0,95 N·m en el motor × 5 en el eje), y la batería rinde casi el doble.
 
 **Alternativa más barata:** batería de plomo-ácido sellada de 12 V y 7 Ah (las de alarmas),
@@ -132,12 +149,13 @@ respaldo para alimentar solo la Raspberry Pi por ~1 h con un *step-down*, o no u
 |---|---|---|---|
 | **Telescopio** | Maksutov 90/1250 (Skymax 90 o equivalente), solo el tubo | 1 | 200–260 + envío |
 | **Montura** | Trípode de topografía de aluminio (rosca 5/8″) | 1 | 35–60 |
-| | Rodamiento giratorio "lazy susan" de 150 mm | 1 | 4–6 |
+| | Rodamiento giratorio "lazy susan" de **4″ (102 mm)** | 1 | 3–5 |
 | | Rodamientos 608ZZ | 4 | 3–5 |
 | | Varilla de acero de 8 mm (20 cm) o perno M8 | 1 | 2–4 |
 | | Perfil de aluminio 2040 (30 cm) + tuercas en T | 1 | 6–10 |
 | | Polea GT2 de 20 dientes con **agujero de 8 mm**, ancho 6 mm | 2 | 5–8 |
-| | Correa GT2 cerrada de 6 mm (largo según el diseño) | 2 | 5–8 |
+| | Correas GT2 cerradas de 6 mm: **600 mm** (azimut) y **280 mm** (altitud) | 2 | 5–8 |
+| | Barra cola de milano Vixen comercial (opcional; también se imprime) y anillas si el tubo no tiene pie | — | 0–25 |
 | | Tornillería M3/M5/M8 y tornillo 1/4″-20 | — | 6–10 |
 | | Filamento PETG | 1 kg | 20–28 |
 | | Fines de carrera (microswitch con palanca) | 2 | 1–3 |
@@ -164,7 +182,7 @@ de aluminio.
 
 ## 5. Cambios en el software
 
-- `config.ejemplo.json` queda con **reducción 5:1**, **velocidad máxima de 900 micropasos/s**
-  (~20°/s) y **sin fin de carrera en azimut**.
+- `config.ejemplo.json` queda con **reducción de 14:1 en azimut** (2000 micropasos/s, ~16°/s)
+  y **de 5:1 en altitud** (900 micropasos/s, ~20°/s), y **sin fin de carrera en azimut**.
 - Pendiente para el paso de integración: leer el GY-91 (inclinación y presión para la
   refracción) y el AS5600 (ángulo real de altitud), y registrarlos junto con cada apuntado.
