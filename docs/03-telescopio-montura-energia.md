@@ -159,22 +159,23 @@ respaldo para alimentar solo la Raspberry Pi por ~1 h con un *step-down*, o no u
 | | Barra cola de milano Vixen comercial (opcional; también se imprime) y anillas si el tubo no tiene pie | — | 0–25 |
 | | Tornillería M3/M5/M8 y tornillo 1/4″-20 | — | 6–10 |
 | | Filamento PETG (montura, caja de control y panel) | 2 kg | 40–56 |
-| | Prensaestopas PG7 | 8 | 3–5 |
+| | Prensaestopas PG7 | 9 | 3–5 |
 | | Fines de carrera (microswitch con palanca) | 2 | 1–3 |
 | | Imán diametral para el AS5600 (si no venía con el módulo) | 1 | 1–2 |
 | **Energía** | Batería LiFePO4 de 12,8 V y 12 Ah con BMS | 1 | 45–70 |
 | | Cargador LiFePO4 de 14,6 V | 1 | 15–25 |
-| | *Step-down* a 5,1 V y 5 A (XL4015) + cable USB-C | 1 | 5–8 |
+| | *Step-down* a 5,1 V y 5 A (XL4015) + cable USB-C acodado con puntas libres | 1 | 6–10 |
 | | Portafusible con fusible de 7,5 A + interruptor | 1 | 4–6 |
 | | Voltímetro o indicador para 12 V (LiFePO4 4S) | 1 | 3–5 |
 | | Pulsador de paro de emergencia (tipo hongo) | 1 | 3–5 |
-| | Cable de 18 AWG (alimentación), cable de 4 hilos de 22 AWG (motores), borneras y jumpers | — | 8–12 |
+| | Cable de 18 AWG (alimentación), 4 × 20 AWG flexible de silicona (motores) y 6 hilos apantallado (sensores) | — | 8–14 |
+| | **Materiales de cableado:** HAT de borneras para el GPIO, punteras + pinza crimpadora, 2 Wago 221-415, bridas, termorretráctil, separadores M3 y malla (ver [`circuito/LEEME.md`, §6](../circuito/LEEME.md#6-cableado-dentro-de-la-caja-de-control)) | — | 30–55 |
 | **Raspberry Pi** | MicroSD de 32 GB (A1) | 1 | 6–10 |
 | | Disipadores + ventilador o case ventilado | 1 | 5–8 |
 | **Recomendado** | Raspberry Pi Camera Module 3 + adaptador de 1,25″ impreso | 1 | 25–35 |
 | | Nivel de burbuja circular | 1 | 1–3 |
 
-**Total aproximado sin el telescopio: USD 235–365.** Con el telescopio: USD 435–625.
+**Total aproximado sin el telescopio: USD 265–420.** Con el telescopio: USD 465–680.
 
 **Para bajar el costo:** usar un trípode de madera o de cámara robusto que ya tengas, una
 batería de plomo-ácido de 12 V y 7 Ah, y un brazo de madera contrachapada en lugar del perfil

@@ -10,7 +10,8 @@ es la **Figura 3 del artículo**.
 - **Panel de energía impreso**, junto a la batería: paro de emergencia, interruptor,
   voltímetro y fusible.
 
-Ver [`montura/LEEME.md`, §6](../montura/LEEME.md#6-dónde-va-la-electrónica).
+Ver [`montura/LEEME.md`, §6](../montura/LEEME.md#6-dónde-va-la-electrónica). Cómo cablear
+dentro de la caja sin que los cables se dañen: [§6 de esta guía](#6-cableado-dentro-de-la-caja-de-control).
 
 > ⚠️ **Seguridad**
 > - Conecta y desconecta cables **siempre con el interruptor general apagado**.
@@ -34,7 +35,7 @@ Los pines son los **números físicos** del conector de 40 pines de la Raspberry
 | Interruptor | **Voltímetro +** y **entrada + del step-down** | 18 AWG rojo |
 | Interruptor | **Paro de emergencia** (contacto NC) → **VCC** de los dos TB6600 | 18 AWG rojo |
 | Batería **−** | GND de los TB6600, entrada − del step-down y voltímetro − | 18 AWG negro |
-| Step-down **salida 5,1 V** | Raspberry Pi por **USB-C** (cable USB-C de buena calidad) | — |
+| Step-down **salida 5,1 V** | Raspberry Pi por **USB-C**: cable USB-C acodado (90°) con puntas libres, atornillado a la salida del step-down | 20 AWG |
 
 El paro de emergencia corta **solo los motores**: la Raspberry Pi sigue encendida y no se
 corrompe la microSD.
@@ -137,3 +138,59 @@ pip install smbus2  # lectura del GY-91 y del AS5600
 ```
 
 > El script de instalación automática (paso 5 del plan) hará todo esto por ti.
+
+---
+
+## 6. Cableado dentro de la caja de control
+
+![Plano de cableado de la caja](cableado_caja.png)
+
+`cableado_caja.svg` y `cableado_caja.png` se generan con `python3 generar_cableado_caja.py`.
+Es un plano a escala de la caja vista desde arriba, con la montura arriba.
+
+### Qué daña los cables y cómo lo evita la caja
+
+| Riesgo | Qué pasa | Solución |
+|---|---|---|
+| **Vibración** (motores, transporte) | Los jumpers Dupont se salen y los hilos sueltos se cortan en el borne | **HAT de borneras de tornillo** en el GPIO, **punteras** en cada punta y **bridas** al piso perforado |
+| **Tirones desde afuera** | Alguien engancha un cable y lo arranca del borne | **Prensaestopas** apretado: el tirón queda en la pared, no en el borne |
+| **Aplastamiento** | Al cerrar la tapa, un cable queda pellizcado o doblado a 90° contra una bornera | **Canal de 20 mm** frente a las borneras de los TB6600 y 60 mm de altura libre |
+| **Calor** | El aislante se ablanda sobre un disipador | Ningún cable sobre los TB6600 ni pegado al step-down; ranuras de ventilación |
+| **Roce con bordes** | El aislante se pela con el canto de un agujero | Todo cable entra por prensaestopas; lija cualquier rebaba de impresión |
+| **Torsión** (giro en azimut) | El cable del motor de altitud se retuerce | Holgura de 1,5 vueltas, cable flexible de silicona y límite de ±270° en el software |
+| **Ruido eléctrico** | Los motores interfieren con el I²C o el GPS | Potencia por el canal y señales en la zona de control; I²C con cable apantallado |
+| **Humedad** (rocío nocturno) | Corrosión en las borneras | Caja cerrada con prensaestopas; opcional, un sobre de sílica gel dentro |
+
+### Materiales de cableado
+
+| Ítem | Para qué | Aprox. USD |
+|---|---|---|
+| **HAT de borneras de tornillo** para Raspberry Pi (*GPIO screw terminal HAT*) | Reemplaza los jumpers Dupont | 8–15 |
+| **Punteras aisladas** de 0,5, 0,75 y 1,0 mm² + **pinza crimpadora** | Puntas firmes en las borneras de tornillo | 12–20 |
+| 2 conectores **Wago 221-415** (5 vías) | Repartir 12 V y GND sin empalmes | 3–5 |
+| Cable **USB-C acodado (90°) con puntas libres** | 5 V del step-down a la Raspberry Pi (C7) | 3–5 |
+| Bridas de 2,5 mm (100 u.) | Sujetar los cables al piso perforado | 2–3 |
+| Termorretráctil surtido | Aislar empalmes y numerar los cables | 3–5 |
+| Cable de 4 × 20 AWG **flexible de silicona** (2 m) | Motores (C1 y C2) | 4–8 |
+| Cable de 6 hilos **apantallado** (1 m) | AS5600 y fines de carrera (C10) | 2–4 |
+| 8 separadores M3 de 5 mm | Levantar los TB6600 del piso para que circule el aire | 1–2 |
+| 1 m de malla o espiral para cables | Proteger los tramos fuera de la caja | 2–4 |
+
+### Orden de cableado
+
+1. **Antes de montar nada:** configura los interruptores DIP de los TB6600 (§2) y ajusta la
+   salida del step-down a **5,1 V** con el multímetro.
+2. **Fija las placas:** los TB6600 sobre separadores de 5 mm con las borneras hacia el canal,
+   la Raspberry Pi en sus postes con el HAT puesto, y luego el step-down, las Wago, el GPS y
+   el GY-91.
+3. **Pasa los cables externos** por los prensaestopas, sin apretarlos todavía, y numera cada
+   cable en los dos extremos (C1 a C12) con termorretráctil o cinta.
+4. **Primero la potencia:** C3 a las Wago, luego C4, C5 y C6. Con el multímetro, comprueba
+   que **no hay corto entre 12 V y GND** antes de seguir.
+5. **Motores** (C1 y C2) con punteras. Revisa las bobinas como indica el §3.
+6. **Señales de paso** (C8 y C9), luego los sensores (C10 a C12) y al final el 5 V de la
+   Raspberry Pi (C7).
+7. **Ordena:** brida a menos de 5 cm de cada borne, pasada por dos agujeros vecinos del piso,
+   y deja un bucle de 3–5 cm en cada cable. Aprieta los prensaestopas.
+8. **Prueba de tirón:** tira suavemente de cada cable. No debe salirse ni mover el borne.
+9. Haz la **prueba en banco** del §4 con la tapa abierta y, cuando todo funcione, ciérrala.

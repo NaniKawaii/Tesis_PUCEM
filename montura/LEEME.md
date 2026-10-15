@@ -53,13 +53,13 @@ de 280 dientes. Pon un trozo de correa GT2 encima:
 | 7 | `soporte_motor_altitud.stl` | 1 | De pie | No | ~63 g |
 | 8 | `montura_vixen.stl` | 1 | Mordazas sobre la cama | No; el canal es un puente de 45 mm | ~76 g |
 | 9 | `barra_vixen.stl` | 1 (opcional) | Cara ancha sobre la cama | No | ~66 g |
-| 10 | `caja_control.stl` | 1 | Fondo sobre la cama | No | ~167 g |
-| 11 | `tapa_caja.stl` | 1 | Cara exterior sobre la cama | No | ~59 g |
+| 10 | `caja_control.stl` | 1 | Fondo sobre la cama (213 × 210 mm: ocupa casi toda la cama) | No | ~181 g |
+| 11 | `tapa_caja.stl` | 1 | Cara exterior sobre la cama | No | ~72 g |
 | 12 | `panel_energia.stl` | 1 | Frente sobre la cama | No | ~72 g |
 | 13 | `tapa_panel.stl` | 1 | Plana | No | ~26 g |
 | — | `prueba_gt2.stl` | 1 | — | No | ~8 g |
 
-**Total: unos 1 020 g de PETG**, así que conviene comprar **2 rollos de 1 kg** (sobra para
+**Total: unos 1 050 g de PETG**, así que conviene comprar **2 rollos de 1 kg** (sobra para
 reimprimir alguna pieza). Todas las piezas caben en una cama de
 220 × 220 mm (Ender 3 o similar).
 
@@ -86,9 +86,9 @@ relleno **gyroid del 40 %**, 5 capas superiores e inferiores. Para las piezas gr
 | AS5600 | Imán diametral de 6 × 2,5 mm pegado en la punta del eje (lado de la polea) |
 | Fines de carrera | 2 microswitches en el cabezal; un tornillo M3 en uno de los agujeros de la polea (cada 15°) hace de leva |
 | Caja de control ↔ base | 3 tornillos M5×25 y 3 tuercas M5 (embutidas bajo la lengüeta) |
-| Placas dentro de la caja | 4 tornillos autorroscantes M2.5×6 (Raspberry Pi) y ~12 autorroscantes M3×8 (TB6600, step-down, borneras, GY-91, GPS) |
+| Placas dentro de la caja | 4 tornillos autorroscantes M2.5×6 (Raspberry Pi) y ~12 autorroscantes M3×8 (TB6600, step-down, GY-91, GPS). Los TB6600 van sobre separadores de 5 mm |
 | Tapas de la caja y del panel | 8 tornillos autorroscantes M3×10 |
-| Cables | 8 prensaestopas **PG7** (5 en la caja, 3 en el panel) y una correa de velcro de 25 mm |
+| Cables | 9 prensaestopas **PG7** (6 en la caja, 3 en el panel; los de reserva se tapan con un tapón PG7) y una correa de velcro de 25 mm. Materiales de cableado: ver [`circuito/LEEME.md` §6](../circuito/LEEME.md#6-cableado-dentro-de-la-caja-de-control) |
 
 **Distancia entre ejes según la correa**
 
@@ -139,21 +139,41 @@ cambias de focal, recuerda que el campo visual cambia.
 
 | Unidad | Dónde | Qué contiene |
 |---|---|---|
-| **Caja de control** (piezas 10 y 11) | Atornillada a la **base fija**, del lado opuesto al motor de azimut. **No gira** con la montura | Raspberry Pi 4, 2 × TB6600, step-down, borneras, **GY-91** (al ir fija a la base mide la nivelación del trípode) y **GPS** (la antena se pega bajo la tapa: el PETG deja pasar la señal) |
+| **Caja de control** (piezas 10 y 11, 162 × 210 × 60 mm) | Atornillada a la **base fija**, del lado opuesto al motor de azimut. **No gira** con la montura | Raspberry Pi 4, 2 × TB6600, step-down, borneras Wago, **GY-91** (al ir fija a la base mide la nivelación del trípode) y **GPS** (la antena se pega bajo la tapa: el PETG deja pasar la señal) |
 | **Panel de energía** (piezas 12 y 13) | Colgado con velcro de una pata del trípode, junto a la batería | Paro de emergencia, interruptor general, voltímetro y fusible en línea |
 | **Batería LiFePO4** | Colgada entre las patas del trípode (bolsa o bandeja) | — |
 
-**Recorrido de los cables:**
+**La caja está dividida en tres zonas** para que los cables no se crucen ni se aplasten:
+
+| Zona | Qué va | Por qué |
+|---|---|---|
+| **Control** (junto a la montura) | Raspberry Pi con HAT de borneras, step-down, Wago, GPS y GY-91 | Todo lo de 5 V y las señales sensibles (I²C, GPS) quedan juntos y lejos de los motores |
+| **Canal de cables** (20 mm de ancho, de lado a lado) | Solo cables: motores, 12 V y señales de paso | Deja espacio para doblar los cables frente a las borneras sin forzarlos |
+| **Potencia** (al fondo) | Los 2 TB6600, con sus borneras mirando al canal | Los drivers son lo que más calienta: quedan junto a las ranuras del costado y del fondo |
+
+**Prensaestopas (P1 a P6):** P1 (pared junto a la montura) para el AS5600 y los fines de
+carrera; P3 y P4 (costado izquierdo, uno sobre otro) para el motor de azimut y la
+alimentación; P5 (costado derecho) para el motor de altitud; P2 y P6 quedan de reserva.
+Los motores y la alimentación entran por los costados justo a la altura del canal, así
+llegan directo a las borneras de los TB6600 sin cruzar la zona de control.
+
+El plano a escala con el recorrido de cada cable, la lista de cables y las reglas de
+armado están en [`circuito/LEEME.md` §6](../circuito/LEEME.md#6-cableado-dentro-de-la-caja-de-control).
+
+**Recorrido de los cables fuera de la caja:**
 - **Motor de altitud, AS5600 y fines de carrera:** bajan por el brazo, pasan por el agujero
-  central del plato (Ø 25 mm), el lazy susan y el agujero de la base, y entran por debajo
-  de la base a la caja por los prensaestopas de la pared interior. Deja una holgura de
-  1,5 vueltas para el giro de ±270°.
+  central del plato (Ø 25 mm), el lazy susan y el agujero de la base, y salen por debajo de
+  la base hacia la caja. Deja una holgura de 1,5 vueltas para el giro de ±270° y usa cable
+  flexible de silicona: es el único tramo que se mueve.
 - **Motor de azimut:** va por debajo de la base, del soporte del motor a la caja.
 - **Alimentación:** un cable de 4 hilos de 18 AWG (12 V lógica, 12 V motores y 2 GND) va
-  del panel de energía al prensaestopas de la pared exterior de la caja.
+  del panel de energía al prensaestopas P4.
+- **Afuera, cubre los cables con malla o espiral** y sujétalos al trípode con velcro, para
+  que nadie los enganche con el pie en la oscuridad.
 
-**Ventilación:** las ranuras laterales quedan frente a los TB6600 y a la Raspberry Pi. Con
-1,5 A los drivers se entibian, pero no necesitan ventilador. Para la Raspberry Pi se
+**Ventilación:** las ranuras de los costados y del fondo quedan frente a los TB6600, que van
+sobre separadores de 5 mm para que el aire pase bajo el disipador. Con 1,5 A los drivers se
+entibian, pero no necesitan ventilador. Para la Raspberry Pi se
 recomienda un disipador.
 
 **Orientación al norte:** la tapa tiene grabada una flecha **N** que apunta hacia la
@@ -178,7 +198,7 @@ norte, con el tubo paralelo a esa dirección y el objetivo hacia el norte. Luego
 8. **Motor de altitud:** atornilla el soporte a la cara del perfil del lado de la polea,
    coloca la correa de 280 mm y tensa deslizando el soporte hacia abajo.
 9. **Telescopio:** colócalo en la mordaza y balancéalo.
-10. **Caja de control:** atorníllala a la base (3 M5), fija las placas según el
-    [esquema de conexiones](../circuito/LEEME.md) y pasa los cables por los prensaestopas.
+10. **Caja de control:** atorníllala a la base (3 M5) y cablea siguiendo el
+    [plano de cableado](../circuito/LEEME.md#6-cableado-dentro-de-la-caja-de-control).
 11. **Referencia:** con el trípode nivelado, orienta la flecha **N** de la tapa al norte y
     pulsa "Referenciar" en la interfaz web.
