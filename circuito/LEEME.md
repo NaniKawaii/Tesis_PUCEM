@@ -52,6 +52,13 @@ corrompe la microSD.
 El software mantiene **ENA en bajo** para que el motor tenga fuerza. Al cerrar el servidor
 lo pone en alto y el motor queda libre.
 
+> ⚡ **Tus drivers dicen "+5V" en PUL+, DIR+ y ENA+**, pero el GPIO de la Raspberry Pi da
+> 3,3 V. Con el cableado de cátodo común casi siempre funciona igual, porque el optoacoplador
+> se enciende con unos 6–8 mA. Si en la prueba 8 el motor no responde o no vuelve al mismo
+> punto, agrega un adaptador de nivel **74HCT245** (≈ USD 2) entre la Raspberry Pi y los
+> TB6600. **No uses** el cableado de ánodo común con 5 V: con el GPIO en alto el
+> optoacoplador queda a medio encender.
+
 ### Sensores
 
 | Componente | Pin del módulo | Raspberry Pi |
@@ -87,9 +94,12 @@ lo pone en alto y el motor queda libre.
 | **Posición** | OFF | OFF | ON | ON | ON | OFF |
 | Significado | 16 micropasos (3200 pulsos por vuelta) | | | 1,5 A (pico 1,7 A) | | |
 
-> Esta es la tabla más común en los TB6600, pero algunos clones cambian el orden.
-> **Confirma con la etiqueta impresa en tu driver** y busca la fila "16 / 3200" y la
-> columna "1,5 A".
+> ✅ **Coincide con la tabla impresa en tus drivers** (revisada en tu foto): 16 micropasos =
+> SW1 OFF, SW2 OFF, SW3 ON; 1,5 A = SW4 ON, SW5 ON, SW6 OFF. En el interruptor rojo, **ON es
+> hacia abajo** (la marca "ON↓"). Usa la punta de un palillo o un destornillador fino.
+>
+> El interruptor queda en un extremo del driver, que dentro de la caja queda contra la
+> pared o contra el otro driver: **configúralo antes de atornillarlo**.
 
 ## 3. Identificar las bobinas del motor
 
@@ -97,7 +107,13 @@ El NEMA 23 tiene 4 cables, dos por bobina. Con el multímetro en continuidad o r
 - **Los dos cables de una misma bobina** marcan unos **1 Ω** entre sí. Esa bobina va a
   **A+ y A−**.
 - Los otros dos forman la segunda bobina, que va a **B+ y B−**.
-- **Colores típicos de los JK57HS:** A+ negro, A− verde, B+ rojo y B− azul.
+- **Tu motor** tiene cables amarillo, azul, verde y rojo, y ya trae un **enchufe verde de 4
+  polos** que entra directo en la bornera de motor del TB6600 (B−, B+, A−, A+). Antes de
+  enchufarlo, mide entre los tornillos del enchufe: el par 1–2 y el par 3–4 deben marcar
+  ≈ 1 Ω cada uno, y entre 1 y 3 no debe haber continuidad. Si no es así, reordena los
+  cables en el enchufe.
+- **Desata los nudos** del cable del motor: un nudo dobla los hilos en un punto y con el uso
+  se cortan por dentro sin que se note por fuera.
 - **Si el motor gira al revés,** no cambies cables: pon `"invertido": true` en ese eje del
   `config.json`.
 
@@ -180,6 +196,10 @@ Es un plano a escala de la caja vista desde arriba, con la montura arriba.
 
 1. **Antes de montar nada:** configura los interruptores DIP de los TB6600 (§2) y ajusta la
    salida del step-down a **5,1 V** con el multímetro.
+   - Tus TB6600 tienen **borneras enchufables**: tres enchufes verdes (señal de 6 polos,
+     motor de 4 y alimentación de 2) que se sacan tirando. Cablea cada enchufe en la mesa,
+     con buena luz, y luego enchúfalo. Para transportar la montura, basta con desenchufar los
+     motores.
 2. **Fija las placas:** los TB6600 sobre separadores de 5 mm con las borneras hacia el canal,
    la Raspberry Pi en sus postes con el HAT puesto, y luego el step-down, las Wago, el GPS y
    el GY-91.

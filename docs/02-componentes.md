@@ -12,7 +12,7 @@ para Ecuador y deben cotizarse.
 | # | Componente | Precio | Veredicto | Uso en el prototipo |
 |---|---|---|---|---|
 | 1 | 2 × NEMA 23 JK57HS76-3004 (1,8°, 3 A, ~1,9 N·m, ~1 kg, eje de 8 mm) | 113,04 | ✅ **Sirve** | Un motor por eje (azimut y altitud). Tiene torque de sobra; el detalle es su peso (~1 kg cada uno), que la estructura de PLA debe soportar. Necesita una **reducción** (ver §2) |
-| 2 | 2 × Driver TB6600 (9–42 V) | 38,26 | ✅ **Sirve** | Uno por motor. Configurar los switches en **16 micropasos** y la corriente en **2,5–2,8 A** (el motor admite 3 A; un poco menos evita que se caliente) |
+| 2 | 2 × Driver TB6600 (9–42 V) | 38,26 | ✅ **Sirve** | Uno por motor. Configurar los switches en **16 micropasos** y la corriente en **1,5 A**: con las reducciones de 14:1 y 5:1 sobra torque y la batería dura casi el doble (ver [`docs/03`](03-telescopio-montura-energia.md#consumo-estimado)) |
 | 3 | Raspberry Pi 4 (2 GB) | 77,99 | ✅ **Sirve** | Cerebro del sistema: efemérides, servidor web, IA y señales STEP/DIR. 2 GB son suficientes. Le faltan la microSD y la alimentación (ver §2) |
 | 4 | Pantalla TFT HDMI de 5″ (800×480) | 60,86 | 🟡 **Opcional** | No es necesaria porque todo se controla desde el navegador. Puede usarse como panel local (mostrar la interfaz web o la vista de una cámara) en ferias o demostraciones. Consume energía extra en campo |
 | 5 | Encoder magnético AS5600 (12 bits) | 6,03 | ✅ **Sirve (en 1 eje)** | Montado en el eje de **altitud**, mide el ángulo real y permite detectar pasos perdidos o comparar el ángulo comandado con el medido. Es un dato extra para el artículo. Usa I²C (dirección 0x36), sin conflicto con el GY-91 |
@@ -21,6 +21,19 @@ para Ecuador y deben cotizarse.
 | 8 | Batería LiPo 2S 7,4 V 1100 mAh | 17,35 | ❌ **No sirve para los motores** | Los TB6600 necesitan **mínimo 9 V**. Solo podría alimentar la Raspberry Pi con un convertidor *buck*, y únicamente durante ~1 h |
 | 9 | BMS 2S 13 A | 4,30 | ❌ **No hace falta** | Es para armar packs de celdas 18650. Una LiPo ya armada se carga con un cargador balanceador, no con un BMS |
 | 10 | Indicador de carga 2S | 4,26 | ❌ **No hace falta** | Solo tiene sentido si se usa la batería 2S |
+
+### Revisión física de los componentes (fotos del 15/10/2026)
+
+| Componente en la foto | Qué se ve | Qué hacer |
+|---|---|---|
+| GPS **GY-GPS6MV2** (NEO-6M) con antena cerámica de 25 × 25 mm | La antena va aparte, unida por un cable fino con conector u.FL | Pegar la antena bajo la tapa de la caja, con la cara de cerámica (la del punto plateado) hacia arriba. **Medir el largo del cable de la antena**: debe llegar del GPS a la tapa (≈ 5 cm) sin quedar tenso |
+| **2 × TB6600** "Microstep Driver" | Tabla de DIP impresa idéntica a la de la guía; borneras **enchufables** (señal 6, motor 4, alimentación 2) | Configurar 16 micropasos y 1,5 A antes de montarlos. **Medir largo, ancho sin borneras, alto y cuánto sobresalen las borneras** para ajustar la caja |
+| Motor **JK57HS76-3004** | Cables amarillo, azul, verde y rojo con un enchufe verde de 4 polos ya puesto; el cable tiene nudos | Desatar los nudos, comprobar los pares con el multímetro (≈ 1 Ω). **Medir el largo del cable**: el de altitud necesitará un alargue de ≈ 1 m |
+| **AS5600** (placa cuadrada con 4 agujeros) | Pines DIR, SCL, SDA, GPO, VCC, OUT y GND. No se ve el imán | DIR a GND; OUT y GPO sin conectar. Buscar el **imán diametral** (suele venir en una bolsita). **Medir la placa y la distancia entre agujeros** para diseñar su soporte |
+| **GY-91** | Módulo de 10 pines | Sin cambios |
+| **Raspberry Pi 4** | Sin disipadores | Ponerle disipadores (están en la lista de compras) |
+| Fuente para protoboard **MB102** | Reguladores de ≈ 0,7 A, entrada hasta 12 V | ❌ **No usar en el prototipo**: no alcanza para la Raspberry Pi 4 (necesita 3 A) y la LiFePO4 llega a 14,6 V. Hace falta el *step-down* XL4015 |
+| BMS **HX-2S-D20** e indicador de carga 2S | Son para la batería 2S | ❌ Siguen sin hacer falta. El indicador 2S no sirve para la LiFePO4 de 4 celdas |
 
 **Resumen:** de USD 353,21 sin IVA, unos **USD 256,54 son el núcleo útil**: motores,
 drivers, Raspberry Pi, GPS, IMU y encoder. **USD 60,86** son un extra opcional (la pantalla)

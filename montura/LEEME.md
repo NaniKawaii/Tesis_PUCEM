@@ -83,7 +83,7 @@ relleno **gyroid del 40 %**, 5 capas superiores e inferiores. Para las piezas gr
 | Apriete de la mordaza Vixen | 2 tornillos M5×30 con 2 tuercas M5 (mejor con perillas) |
 | Barra Vixen impresa ↔ telescopio | Tornillo **1/4″-20** (pie del telescopio o anillas) o M6, y 2 tornillos de tope M5 en los extremos |
 | Correas GT2 de 6 mm cerradas | **Azimut: 600 mm** (o 610). **Altitud: 280 mm** (o 300) |
-| AS5600 | Imán diametral de 6 × 2,5 mm pegado en la punta del eje (lado de la polea) |
+| AS5600 | Imán diametral de 6 × 2,5 mm pegado en la punta del eje (lado de la polea). La placa va fija frente al imán, a 1–2 mm. **El soporte impreso de la placa está pendiente**: se diseña con las medidas de tu módulo |
 | Fines de carrera | 2 microswitches en el cabezal; un tornillo M3 en uno de los agujeros de la polea (cada 15°) hace de leva |
 | Caja de control ↔ base | 3 tornillos M5×25 y 3 tuercas M5 (embutidas bajo la lengüeta) |
 | Placas dentro de la caja | 4 tornillos autorroscantes M2.5×6 (Raspberry Pi) y ~12 autorroscantes M3×8 (TB6600, step-down, GY-91, GPS). Los TB6600 van sobre separadores de 5 mm |
@@ -139,7 +139,7 @@ cambias de focal, recuerda que el campo visual cambia.
 
 | Unidad | Dónde | Qué contiene |
 |---|---|---|
-| **Caja de control** (piezas 10 y 11, 162 × 210 × 60 mm) | Atornillada a la **base fija**, del lado opuesto al motor de azimut. **No gira** con la montura | Raspberry Pi 4, 2 × TB6600, step-down, borneras Wago, **GY-91** (al ir fija a la base mide la nivelación del trípode) y **GPS** (la antena se pega bajo la tapa: el PETG deja pasar la señal) |
+| **Caja de control** (piezas 10 y 11, 162 × 210 × 60 mm) | Atornillada a la **base fija**, del lado opuesto al motor de azimut. **No gira** con la montura | Raspberry Pi 4, 2 × TB6600, step-down, borneras Wago, **GY-91** (al ir fija a la base mide la nivelación del trípode) y **GPS** (la antena cerámica se pega bajo la tapa, con la cara del punto plateado hacia arriba: el PETG deja pasar la señal) |
 | **Panel de energía** (piezas 12 y 13) | Colgado con velcro de una pata del trípode, junto a la batería | Paro de emergencia, interruptor general, voltímetro y fusible en línea |
 | **Batería LiFePO4** | Colgada entre las patas del trípode (bolsa o bandeja) | — |
 
