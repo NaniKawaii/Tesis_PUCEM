@@ -184,5 +184,5 @@ de aluminio.
 
 - `config.ejemplo.json` queda con **reducción de 14:1 en azimut** (2000 micropasos/s, ~16°/s)
   y **de 5:1 en altitud** (900 micropasos/s, ~20°/s), y **sin fin de carrera en azimut**.
-- Pendiente para el paso de integración: leer el GY-91 (inclinación y presión para la
-  refracción) y el AS5600 (ángulo real de altitud), y registrarlos junto con cada apuntado.
+- La lectura del GY-91 (inclinación) y del AS5600 (ángulo real de altitud) ya está
+  programada (`sensores.py`). Pendiente: registrarlos junto con cada apuntado.

@@ -118,12 +118,13 @@ con el programa `prueba_banco` (motores, fines de carrera, GPS, I²C, encoder y 
 | E5 | Latencia de los comandos web | 50 comandos |
 
 **Pendiente de mi parte para estos pasos:**
-- Lectura del GY-91 (inclinación y presión) y del AS5600.
 - Registro automático de E3 y E5.
 - Formulario de consentimiento y cuestionario SUS.
 - Script de análisis estadístico, que genera directamente las tablas y la figura del artículo.
 
 ### 12. Artículo
 
-El borrador v2 está en [`articulo/articulo_v2.docx`](../articulo/articulo_v2.docx). Todo
+El borrador v2 está en [`articulo/articulo_v2.docx`](../articulo/articulo_v2.docx) y, como
+Google Doc editable, en la carpeta **"Artículo científico – versiones"** de tu Drive, junto
+con la versión 1. Todo
 lo que está **resaltado en amarillo `[[ ]]`** se completa **solo con datos medidos**.
