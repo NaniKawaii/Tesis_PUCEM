@@ -146,6 +146,9 @@ respaldo para alimentar solo la Raspberry Pi por ~1 h con un *step-down*, o no u
 
 ## 4. Lista de compras definitiva
 
+> 🛒 La versión lista para enviar al proveedor (solo lo que falta, con tornillería y
+> materiales de cableado) está en [`05-lista-para-proveedor.md`](05-lista-para-proveedor.md).
+
 | Grupo | Ítem | Cant. | Aprox. USD |
 |---|---|---|---|
 | **Telescopio** | Maksutov 90/1250 (Skymax 90 o equivalente), solo el tubo | 1 | 200–260 + envío |
