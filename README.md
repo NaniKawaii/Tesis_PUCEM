@@ -11,6 +11,8 @@
 | [`docs/01-diagnostico-articulo.md`](docs/01-diagnostico-articulo.md) | Revisión del borrador frente a la guía de la revista, verificación de referencias, observaciones sobre el hardware, propuesta de IA y diseño experimental |
 | [`docs/02-componentes.md`](docs/02-componentes.md) | Revisión de los componentes comprados (factura): qué sirve, qué no y qué falta comprar |
 | [`docs/03-telescopio-montura-energia.md`](docs/03-telescopio-montura-energia.md) | Telescopio recomendado, diseño de la montura, baterías para campo y lista de compras definitiva |
+| [`docs/04-plan-de-trabajo.md`](docs/04-plan-de-trabajo.md) | **Plan paso a paso** (compras → impresión → circuito → software → pruebas → artículo) y cómo funciona el software (Raspberry Pi + web) |
+| [`articulo/`](articulo/LEEME.md) | **Artículo científico v2** en Word con el formato de la revista Esprint |
 | [`montura/`](montura/LEEME.md) | **Piezas imprimibles en 3D** de la montura universal (OpenSCAD paramétrico + STL), guía de impresión y armado |
 | [`prototipo/`](prototipo/README.md) | Software del prototipo: cálculo de planetas, control de motores, interfaz web, registro de pruebas y corrección por IA |
 
@@ -33,6 +35,6 @@ Vamos paso a paso. ✅ = hecho en este repositorio.
 6. ⬜ **Noches de prueba (E1, E2):** ≥ 30 apuntados registrados y entrenamiento y evaluación de la IA.
 7. ⬜ **Pruebas con usuarios (E3, E4):** 20 participantes, tiempos y cuestionario SUS.
    Script de análisis estadístico.
-8. ⬜ **Reescribir el artículo** con los datos reales: resumen ≤ 250 palabras con valores
-   de p, tercera persona, figura de metodología, referencias verificadas, APA 7 en orden alfabético.
+8. 🟡 **Artículo:** versión 2 reescrita con el formato de la revista y 15 referencias
+   verificadas ([articulo/](articulo/LEEME.md)). Pendiente: completar los `[[ ]]` con los datos de las pruebas.
 9. ⬜ Traducción del abstract, ORCID, CRediT, maquetación según la plantilla y envío.

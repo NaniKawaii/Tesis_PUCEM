@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" font-family="Arial, Helvetica, sans-serif" font-size="14">
+  <rect width="900" height="430" fill="#ffffff"/>
+  <defs><marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
+  <g font-weight="bold" text-anchor="middle" fill="#111">
+    <text x="105" y="34">1. Diseño</text><text x="330" y="34">2. Construcción</text><text x="560" y="34">3. Experimentación</text><text x="790" y="34">4. Análisis</text>
+  </g>
+  <g stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#f)">
+    <line x1="200" y1="210" x2="233" y2="210"/><line x1="425" y1="210" x2="458" y2="210"/><line x1="660" y1="210" x2="693" y2="210"/>
+    <path d="M790 375 V400 H105 V380" stroke-dasharray="5 4"/>
+  </g>
+  <g fill="#e8eef7" stroke="#3b5b8f" stroke-width="1.5">
+    <rect x="10" y="50" width="190" height="90" rx="6"/><rect x="10" y="155" width="190" height="90" rx="6"/><rect x="10" y="260" width="190" height="115" rx="6"/>
+  </g>
+  <g fill="#fdf2e0" stroke="#a0782c" stroke-width="1.5">
+    <rect x="235" y="50" width="190" height="90" rx="6"/><rect x="235" y="155" width="190" height="90" rx="6"/><rect x="235" y="260" width="190" height="115" rx="6"/>
+  </g>
+  <g fill="#e6f2e6" stroke="#2f7d32" stroke-width="1.5">
+    <rect x="460" y="50" width="200" height="100" rx="6"/><rect x="460" y="160" width="200" height="100" rx="6"/><rect x="460" y="270" width="200" height="105" rx="6"/>
+  </g>
+  <g fill="#f3e8f7" stroke="#7d3c98" stroke-width="1.5">
+    <rect x="695" y="50" width="195" height="150" rx="6"/><rect x="695" y="215" width="195" height="160" rx="6"/>
+  </g>
+  <g fill="#111">
+    <text x="22" y="74" font-weight="bold">Mecánico</text><text x="22" y="94">Montura altacimutal</text><text x="22" y="112">paramétrica (OpenSCAD)</text><text x="22" y="130">Reducciones 14:1 y 5:1</text>
+    <text x="22" y="179" font-weight="bold">Electrónico</text><text x="22" y="199">Raspberry Pi 4, TB6600,</text><text x="22" y="217">NEMA 23, GPS, IMU,</text><text x="22" y="235">encoder, LiFePO4</text>
+    <text x="22" y="284" font-weight="bold">Software</text><text x="22" y="304">Efemérides (Skyfield)</text><text x="22" y="322">Servidor web (FastAPI)</text><text x="22" y="340">Corrección por</text><text x="22" y="358">aprendizaje automático</text>
+    <text x="247" y="74" font-weight="bold">Impresión 3D</text><text x="247" y="94">Piezas en PETG</text><text x="247" y="112">Verificación de</text><text x="247" y="130">interferencias</text>
+    <text x="247" y="179" font-weight="bold">Ensamble y cableado</text><text x="247" y="199">Pruebas de banco</text><text x="247" y="217">de motores y sensores</text>
+    <text x="247" y="284" font-weight="bold">Integración</text><text x="247" y="304">Calibración inicial</text><text x="247" y="322">(nivelación, referencia</text><text x="247" y="340">al norte, GPS)</text>
+    <text x="472" y="74" font-weight="bold">E1 · Precisión del GoTo</text><text x="472" y="94">≥ 30 apuntados registrados</text><text x="472" y="112">error en el cielo (′)</text><text x="472" y="130">E5 · Latencia web</text>
+    <text x="472" y="184" font-weight="bold">E2 · Corrección por IA</text><text x="472" y="204">Validación cruzada k = 5</text><text x="472" y="222">lineal frente a red</text><text x="472" y="240">neuronal (MLP)</text>
+    <text x="472" y="294" font-weight="bold">E3, E4 · Usuarios</text><text x="472" y="314">n = 20, muestreo</text><text x="472" y="332">intencional: tiempo de</text><text x="472" y="350">localización y SUS</text>
+    <text x="707" y="74" font-weight="bold">Estadística descriptiva</text><text x="707" y="94">media, DE, RMS,</text><text x="707" y="112">mediana, IC 95 %</text>
+    <text x="707" y="239" font-weight="bold">Inferencial (α = 0,05)</text><text x="707" y="259">Shapiro-Wilk →</text><text x="707" y="277">t pareada o Wilcoxon</text><text x="707" y="295">t de una muestra</text><text x="707" y="313">SUS frente a 68</text><text x="707" y="331">Tamaño del efecto</text>
+  </g>
+  <text x="450" y="420" text-anchor="middle" font-size="12" fill="#555">Retroalimentación: los resultados ajustan el diseño (iteración)</text>
+</svg>
