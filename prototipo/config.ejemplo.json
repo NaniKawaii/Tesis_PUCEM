@@ -1,0 +1,10 @@
+{
+  "simulacion": false,
+  "gps_puerto": "/dev/serial0",
+  "altitud_minima": 10,
+  "sitio": { "latitud": -1.0546, "longitud": -80.4545, "elevacion_m": 50 },
+  "az":  { "micropasos": 16, "reduccion": 5.0, "vel_max": 3000, "aceleracion": 1500,
+           "pin_step": 17, "pin_dir": 27, "pin_enable": 22, "pin_fin_carrera": 5 },
+  "alt": { "micropasos": 16, "reduccion": 5.0, "vel_max": 3000, "aceleracion": 1500,
+           "pin_step": 23, "pin_dir": 24, "pin_enable": 25, "pin_fin_carrera": 6 }
+}

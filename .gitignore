@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+# Efemérides JPL (se descargan solas la primera vez, ~17 MB)
+*.bsp
+# Datos generados en las pruebas (se versionan a mano cuando sean definitivos)
+prototipo/datos/*.csv
+prototipo/datos/*.joblib

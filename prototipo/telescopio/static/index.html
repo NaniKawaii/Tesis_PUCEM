@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telescopio automatizado</title>
+<style>
+  :root {
+    --fondo: #0d1117; --panel: #161b22; --borde: #30363d; --texto: #e6edf3;
+    --tenue: #9da7b3; --acento: #e5534b; --ok: #3fb950; --aviso: #d29922;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.5 system-ui, sans-serif; background: var(--fondo); color: var(--texto); }
+  header { padding: 16px; border-bottom: 1px solid var(--borde); }
+  h1 { margin: 0; font-size: 1.25rem; }
+  h2 { margin: 0 0 12px; font-size: 1rem; color: var(--tenue); text-transform: uppercase; letter-spacing: .05em; }
+  main { display: grid; gap: 16px; padding: 16px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); max-width: 1200px; margin: 0 auto; }
+  section { background: var(--panel); border: 1px solid var(--borde); border-radius: 8px; padding: 16px; }
+  button { font: inherit; min-height: 44px; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--borde);
+           background: #21262d; color: var(--texto); cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--tenue); }
+  button:focus-visible, select:focus-visible { outline: 3px solid #58a6ff; outline-offset: 2px; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primario { background: var(--acento); border-color: var(--acento); color: #fff; font-weight: 600; }
+  button.peligro { background: #8e1519; border-color: #da3633; color: #fff; font-weight: 700; width: 100%; }
+  select { font: inherit; min-height: 44px; padding: 6px; border-radius: 6px; background: #0d1117; color: var(--texto); border: 1px solid var(--borde); }
+  #mensaje { font-size: 1.05rem; min-height: 3em; }
+  #mensaje.error { color: #ff7b72; }
+  dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 12px 0 0; }
+  dt { color: var(--tenue); }
+  dd { margin: 0; font-variant-numeric: tabular-nums; }
+  ul.objetos { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  ul.objetos button { width: 100%; display: flex; justify-content: space-between; text-align: left; }
+  ul.objetos button[aria-pressed="true"] { border-color: var(--acento); box-shadow: inset 0 0 0 1px var(--acento); }
+  .bajo { color: var(--tenue); font-size: .875rem; }
+  .cruz { display: grid; grid-template-columns: repeat(3, 64px); gap: 6px; justify-content: center; margin: 12px 0; }
+  .cruz button { font-size: 1.25rem; }
+  .fila { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+  .chip { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .8rem; border: 1px solid var(--borde); }
+  .chip.si { color: var(--ok); border-color: var(--ok); }
+  .chip.no { color: var(--aviso); border-color: var(--aviso); }
+  pre { white-space: pre-wrap; font-size: .85rem; color: var(--tenue); margin: 12px 0 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Telescopio automatizado · observación de planetas</h1>
+  <span id="modo" class="bajo"></span>
+</header>
+<main>
+  <section aria-labelledby="t-estado">
+    <h2 id="t-estado">Estado</h2>
+    <p id="mensaje" role="status" aria-live="polite">Conectando…</p>
+    <dl>
+      <dt>Azimut</dt><dd id="az">–</dd>
+      <dt>Altitud</dt><dd id="alt">–</dd>
+      <dt>Montura</dt><dd id="ref">–</dd>
+      <dt>Seguimiento</dt><dd id="seg">–</dd>
+      <dt>Corrección IA</dt><dd id="ia">–</dd>
+      <dt>Hora UTC</dt><dd id="hora">–</dd>
+    </dl>
+    <div class="fila">
+      <button id="btn-ref" type="button">Referenciar (norte, nivelado)</button>
+    </div>
+    <div class="fila"><button id="btn-detener" class="peligro" type="button">DETENER</button></div>
+  </section>
+
+  <section aria-labelledby="t-obj">
+    <h2 id="t-obj">1 · Elegir planeta</h2>
+    <ul id="objetos" class="objetos"><li class="bajo">Calculando posiciones…</li></ul>
+    <div class="fila">
+      <label><input id="usar-ia" type="checkbox" checked> Aplicar corrección IA</label>
+    </div>
+    <div class="fila">
+      <button id="btn-goto" class="primario" type="button" disabled>Apuntar al planeta</button>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-aj">
+    <h2 id="t-aj">2 · Centrar en el ocular</h2>
+    <label for="paso">Tamaño del ajuste</label>
+    <select id="paso">
+      <option value="1">1° (grueso)</option>
+      <option value="0.25" selected>0,25°</option>
+      <option value="0.05">0,05° (3′)</option>
+      <option value="0.01">0,01° (fino)</option>
+    </select>
+    <div class="cruz" role="group" aria-label="Ajuste fino de la montura">
+      <span></span><button type="button" data-eje="alt" data-signo="1" aria-label="Subir">▲</button><span></span>
+      <button type="button" data-eje="az" data-signo="-1" aria-label="Girar a la izquierda">◀</button>
+      <span></span>
+      <button type="button" data-eje="az" data-signo="1" aria-label="Girar a la derecha">▶</button>
+      <span></span><button type="button" data-eje="alt" data-signo="-1" aria-label="Bajar">▼</button><span></span>
+    </div>
+    <div class="fila">
+      <button id="btn-centrado" class="primario" type="button">Objeto centrado (registrar)</button>
+      <button id="btn-seg" type="button">Activar seguimiento</button>
+    </div>
+    <p class="bajo">Al confirmar el centrado se guarda el error de apuntado. Esos registros son los datos de las pruebas y el entrenamiento de la IA.</p>
+  </section>
+
+  <section aria-labelledby="t-ia">
+    <h2 id="t-ia">3 · Inteligencia artificial</h2>
+    <p class="bajo">Entrena un modelo que aprende el error sistemático de la montura a partir de los apuntados registrados (mínimo 10).</p>
+    <p>Registros guardados: <strong id="nreg">0</strong></p>
+    <div class="fila">
+      <select id="tipo-ia" aria-label="Tipo de modelo">
+        <option value="red_neuronal">Red neuronal (MLP)</option>
+        <option value="lineal">Modelo lineal clásico</option>
+      </select>
+      <button id="btn-entrenar" type="button">Entrenar y evaluar</button>
+      <button id="btn-sin-ia" type="button">Quitar modelo</button>
+    </div>
+    <pre id="resultado-ia"></pre>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let elegido = null;
+let estado = null;
+
+async function api(ruta, cuerpo) {
+  const opciones = cuerpo === undefined ? {} : {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(cuerpo),
+  };
+  const r = await fetch(ruta, opciones);
+  const datos = await r.json();
+  if (!r.ok) throw new Error(datos.detail || r.statusText);
+  return datos;
+}
+
+function avisar(texto, esError = false) {
+  $("mensaje").textContent = texto;
+  $("mensaje").classList.toggle("error", esError);
+}
+
+async function accion(promesa) {
+  try { return await promesa; } catch (e) { avisar(e.message, true); }
+}
+
+function grados(v) { return v.toFixed(2).replace(".", ",") + "°"; }
+
+function pintarEstado(e) {
+  estado = e;
+  $("modo").textContent = e.simulacion ? "Modo simulación (sin hardware)" : "Hardware conectado";
+  if (!e.error) avisar(e.mensaje); else avisar(e.mensaje, true);
+  $("az").textContent = grados(e.azimut);
+  $("alt").textContent = grados(e.altitud);
+  $("ref").innerHTML = e.referenciada ? '<span class="chip si">referenciada</span>'
+                                      : '<span class="chip no">sin referenciar</span>';
+  $("seg").textContent = e.siguiendo ? "activo" : "apagado";
+  $("btn-seg").textContent = e.siguiendo ? "Detener seguimiento" : "Activar seguimiento";
+  $("ia").textContent = e.modelo_ia ? `${e.modelo_ia.tipo} (${e.modelo_ia.muestras} registros)` : "sin modelo";
+  $("hora").textContent = e.hora_utc.replace("T", " ").replace("+00:00", "");
+  $("nreg").textContent = e.registros;
+  $("btn-goto").disabled = !elegido || e.en_movimiento;
+}
+
+async function refrescarEstado() {
+  try { pintarEstado(await api("/api/estado")); } catch (e) { avisar("Sin conexión con el telescopio", true); }
+}
+
+async function refrescarObjetos() {
+  const lista = await accion(api("/api/objetos"));
+  if (!lista) return;
+  const ul = $("objetos");
+  ul.innerHTML = "";
+  for (const o of lista) {
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.type = "button";
+    b.disabled = !o.visible;
+    b.setAttribute("aria-pressed", String(o.objeto === elegido));
+    b.innerHTML = `<span>${o.objeto}</span><span class="bajo">${o.visible ? "alt " + grados(o.altitud) : "bajo el horizonte"}</span>`;
+    b.onclick = () => { elegido = o.objeto; refrescarObjetos(); if (estado) pintarEstado(estado); };
+    li.appendChild(b);
+    ul.appendChild(li);
+  }
+}
+
+$("btn-ref").onclick = () => accion(api("/api/referenciar", { azimut: 0, altitud: 0 }).then(pintarEstado));
+$("btn-detener").onclick = () => accion(api("/api/detener", {}).then(pintarEstado));
+$("btn-goto").onclick = () => accion(api("/api/goto", { objeto: elegido, usar_ia: $("usar-ia").checked }).then(refrescarEstado));
+$("btn-centrado").onclick = () => accion(api("/api/centrado", {}).then(refrescarEstado));
+$("btn-seg").onclick = () => accion(api("/api/seguimiento", { activo: !(estado && estado.siguiendo) }).then(pintarEstado));
+$("btn-sin-ia").onclick = () => accion(api("/api/ia/desactivar", {}).then(pintarEstado));
+$("btn-entrenar").onclick = async () => {
+  $("resultado-ia").textContent = "Entrenando…";
+  const r = await accion(api("/api/ia/entrenar", { tipo: $("tipo-ia").value }));
+  $("resultado-ia").textContent = r ? JSON.stringify(r, null, 2) : "";
+  refrescarEstado();
+};
+document.querySelectorAll(".cruz button").forEach((b) => {
+  b.onclick = () => accion(api("/api/ajustar", {
+    eje: b.dataset.eje, grados: Number(b.dataset.signo) * Number($("paso").value),
+  }).then(pintarEstado));
+});
+
+refrescarEstado();
+refrescarObjetos();
+setInterval(refrescarEstado, 1000);
+setInterval(refrescarObjetos, 30000);
+</script>
+</body>
+</html>
