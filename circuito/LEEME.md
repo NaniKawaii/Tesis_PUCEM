@@ -5,6 +5,13 @@
 `esquema.svg` y `esquema.png` se generan con `python3 generar_esquema.py`. El mismo esquema
 es la **Figura 3 del artículo**.
 
+**Dónde va cada cosa físicamente:**
+- **Caja de control impresa**, atornillada a la base: Raspberry Pi, TB6600, step-down, GY-91 y GPS.
+- **Panel de energía impreso**, junto a la batería: paro de emergencia, interruptor,
+  voltímetro y fusible.
+
+Ver [`montura/LEEME.md`, §6](../montura/LEEME.md#6-dónde-va-la-electrónica).
+
 > ⚠️ **Seguridad**
 > - Conecta y desconecta cables **siempre con el interruptor general apagado**.
 > - **Nunca desconectes un motor con el TB6600 energizado:** el pico de voltaje daña el driver.

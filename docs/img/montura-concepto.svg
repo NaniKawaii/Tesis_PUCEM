@@ -32,8 +32,8 @@
   <text x="377" y="393" text-anchor="middle" fill="#fff" font-size="11">Az</text>
   <rect x="368" y="350" width="18" height="8" fill="#c0392b"/>
   <rect x="410" y="362" width="96" height="54" rx="3" fill="#ffffff" stroke="#3b5b8f"/>
-  <text x="458" y="384" text-anchor="middle" font-size="11">RPi 4</text>
-  <text x="458" y="400" text-anchor="middle" font-size="11">2× TB6600</text>
+  <text x="458" y="384" text-anchor="middle" font-size="11">Base fija</text>
+  <text x="458" y="400" text-anchor="middle" font-size="11">(tuerca 5/8″)</text>
   <rect x="515" y="372" width="22" height="16" fill="#f1c40f" stroke="#8a6d00"/>
 
   <!-- rodamiento giratorio y plato -->
@@ -129,8 +129,8 @@
     <text x="645" y="384">antena hacia el cielo</text>
 
     <line x1="506" y1="410" x2="640" y2="430" stroke="#444" marker-end="url(#pt)"/>
-    <text x="645" y="426" font-weight="bold">Caja de electrónica</text>
-    <text x="645" y="442">+ GY-91 fijo (nivelación)</text>
+    <text x="645" y="426" font-weight="bold">Caja de control al costado</text>
+    <text x="645" y="442">RPi 4, 2× TB6600, GPS, GY-91</text>
 
     <line x1="480" y1="546" x2="640" y2="530" stroke="#444" marker-end="url(#pt)"/>
     <text x="645" y="526" font-weight="bold">Batería colgada</text>

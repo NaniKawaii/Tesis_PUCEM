@@ -64,10 +64,11 @@ entraría de forma confiable en el campo de la cámara.
    tipo que se usa con niveles y estaciones totales. Es barato, muy rígido y se consigue en
    ferreterías y tiendas de topografía. **Se imprime solo la cabeza (la montura).** En el
    artículo esto se describe como "montura de diseño propio sobre un trípode comercial".
-2. **Base fija:** adaptador a la rosca 5/8″, el motor de azimut en posición vertical y la
-   caja con la electrónica (Raspberry Pi, 2 TB6600, *step-down* y fusible). El **GY-91 va
-   fijo a la base** para medir la nivelación del trípode, y el **GPS se monta afuera**, mirando
-   al cielo.
+2. **Base fija:** adaptador a la rosca 5/8″ y el motor de azimut en posición vertical. A un
+   costado se atornilla la **caja de control impresa** (Raspberry Pi, 2 TB6600, *step-down*,
+   GY-91 y GPS), que no gira con la montura. El fusible, el interruptor y el paro de
+   emergencia van en un **panel de energía** junto a la batería. Ver la sección "¿Dónde va
+   la electrónica?" de [`montura/LEEME.md`](../montura/LEEME.md).
 3. **Eje de azimut:** un **rodamiento giratorio tipo "lazy susan" de 4″ (102 mm)**. El
    borde del plato giratorio es una **corona GT2 de 280 dientes impresa** que el motor fijo
    mueve con una polea de 20 dientes y una correa cerrada de 600 mm. La reducción es
@@ -157,7 +158,8 @@ respaldo para alimentar solo la Raspberry Pi por ~1 h con un *step-down*, o no u
 | | Correas GT2 cerradas de 6 mm: **600 mm** (azimut) y **280 mm** (altitud) | 2 | 5–8 |
 | | Barra cola de milano Vixen comercial (opcional; también se imprime) y anillas si el tubo no tiene pie | — | 0–25 |
 | | Tornillería M3/M5/M8 y tornillo 1/4″-20 | — | 6–10 |
-| | Filamento PETG | 1 kg | 20–28 |
+| | Filamento PETG (montura, caja de control y panel) | 2 kg | 40–56 |
+| | Prensaestopas PG7 | 8 | 3–5 |
 | | Fines de carrera (microswitch con palanca) | 2 | 1–3 |
 | | Imán diametral para el AS5600 (si no venía con el módulo) | 1 | 1–2 |
 | **Energía** | Batería LiFePO4 de 12,8 V y 12 Ah con BMS | 1 | 45–70 |
@@ -172,7 +174,7 @@ respaldo para alimentar solo la Raspberry Pi por ~1 h con un *step-down*, o no u
 | **Recomendado** | Raspberry Pi Camera Module 3 + adaptador de 1,25″ impreso | 1 | 25–35 |
 | | Nivel de burbuja circular | 1 | 1–3 |
 
-**Total aproximado sin el telescopio: USD 210–330.** Con el telescopio: USD 410–590.
+**Total aproximado sin el telescopio: USD 235–365.** Con el telescopio: USD 435–625.
 
 **Para bajar el costo:** usar un trípode de madera o de cámara robusto que ya tengas, una
 batería de plomo-ácido de 12 V y 7 Ah, y un brazo de madera contrachapada en lugar del perfil

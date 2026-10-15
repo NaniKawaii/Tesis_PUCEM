@@ -14,9 +14,10 @@
 //  (Thingiverse 16627, licencia CC BY-SA 3.0).
 // =============================================================================
 
-pieza = "ensamble";  // ["ensamble", "base_fija", "soporte_motor_azimut", "plato_giratorio", "zocalo_brazo", "cabezal_altitud", "polea_altitud", "soporte_motor_altitud", "montura_vixen", "barra_vixen", "prueba_gt2"]
+pieza = "ensamble";  // ["ensamble", "base_fija", "soporte_motor_azimut", "plato_giratorio", "zocalo_brazo", "cabezal_altitud", "polea_altitud", "soporte_motor_altitud", "montura_vixen", "barra_vixen", "caja_control", "tapa_caja", "panel_energia", "tapa_panel", "prueba_gt2"]
 
 $fn = 72;
+detalle = true;   // false = sin agujeros del tablero (más rápido para revisar interferencias)
 e = 0.01;  // épsilon para que las restas no dejen caras fantasma
 
 // --------------------------------------------------------------- Holguras
@@ -121,6 +122,7 @@ base_h = 10;
 base_cubo_d = 45;
 base_cubo_h = 12;   // bajo la placa
 agujeros_soporte_az = [[52, 0], [70, 18], [70, -18]];
+agujeros_caja = [for (p = agujeros_soporte_az) [-p[0], p[1]]];   // caja de control, lado −X
 
 module base_fija() {
     difference() {
@@ -134,12 +136,11 @@ module base_fija() {
         // paso de cables
         translate([0, 30, -50]) cylinder(d = 14, h = 60);
         // tornillos del soporte del motor de azimut (cabeza embutida arriba)
-        for (p = agujeros_soporte_az) translate([p[0], p[1], 0]) {
+        // tornillos del soporte del motor (+X) y de la caja de control (−X), cabeza embutida arriba
+        for (p = concat(agujeros_soporte_az, agujeros_caja)) translate([p[0], p[1], 0]) {
             translate([0, 0, -50]) cylinder(d = m5, h = 60);
             translate([0, 0, -5.5]) cylinder(d = m5_cabeza_d, h = 6);
         }
-        // marca de referencia del norte (muesca en el borde, eje +X opuesto al motor)
-        translate([-base_d / 2, 0, -base_h - e]) cylinder(d = 4, h = base_h + 1, $fn = 4);
     }
 }
 
@@ -413,6 +414,145 @@ module barra_vixen() {
 }
 
 // ============================================================================
+//  10. CAJA DE CONTROL (Raspberry Pi 4, 2 × TB6600, step-down, GPS y GY-91)
+//      Va fija a la base, del lado opuesto al motor de azimut (−X, hacia el sur):
+//      no gira con la montura, así que sus cables no se enredan. El GY-91 queda
+//      solidario con la base (mide la nivelación) y el GPS recibe señal a través
+//      de la tapa de PETG.
+//      Coordenadas locales: u = hacia afuera (0 = pared junto a la base),
+//      v = a lo ancho, z = altura (0 = fondo). Imprimir con el fondo sobre la cama.
+// ============================================================================
+caja_r0    = 95;      // distancia del eje de azimut a la pared interior (libra la corona: r = 90,4)
+caja_prof  = 140;     // hacia afuera
+caja_ancho = 200;
+caja_alto  = 60;      // sin la tapa
+caja_z0    = -20;     // fondo de la caja respecto de la cara superior de la base (sobre el trípode)
+caja_pared = 3;
+caja_piso  = 3;
+pg7        = 12.7;    // agujero para prensaestopas PG7 (cables de 3–6,5 mm)
+// Ubicación sugerida de las placas (u, v de la esquina; largo en u, ancho en v)
+rpi        = [48, 33, 85, 56];            // Raspberry Pi 4: agujeros 58 × 49 mm, M2.5
+tb6600_a   = [40, -97, 96, 56];           // (MEDIR) tamaño de tu TB6600 (≈ 96 × 56 × 33 mm)
+tb6600_b   = [40, -38, 96, 56];
+
+module caja_control() {
+    W = caja_ancho; P = caja_prof; H = caja_alto; t = caja_pared;
+    difference() {
+        union() {
+            translate([0, -W / 2, 0]) cube([P, W, H]);
+            // lengüeta maciza bajo la base fija (3 tornillos M5, como el soporte del motor);
+            // llega hasta el piso para imprimirse sin soportes
+            translate([-(caja_r0 - 44), -36, 0]) cube([caja_r0 - 44 + t, 72, -caja_z0 - base_h]);
+        }
+        // interior
+        translate([t, -W / 2 + t, caja_piso]) cube([P - 2 * t, W - 2 * t, H]);
+        // tornillos hacia la base (cabeza arriba en la base, tuerca abajo)
+        for (p = agujeros_caja) translate([-(-p[0] - caja_r0), p[1], -1]) {
+            cylinder(d = m5, h = 50);
+            hexagono(m5_tuerca_ac, 1 + 5);   // tuerca embutida por debajo
+        }
+        // prensaestopas: 4 en la pared junto a la base (motores, AS5600, fines de carrera)
+        // y 1 en la pared exterior (alimentación desde el panel de energía)
+        for (v = [-66, -22, 22, 66]) translate([-1, v, 14]) rotate([0, 90, 0]) cylinder(d = pg7, h = t + 2);
+        translate([P - t - 1, 0, 14]) rotate([0, 90, 0]) cylinder(d = pg7, h = t + 2);
+        // ventilación en los costados (zona de los TB6600 y de la Raspberry Pi)
+        for (s = [-1, 1], u = [45 : 12 : 129]) translate([u, s * W / 2 - 5, 22]) cube([4, 10, 28]);
+        // tablero perforado del piso: agujeros de 2,8 mm cada 10 mm para fijar las placas
+        // con tornillos autorroscantes M3 (sirve para cualquier medida de TB6600 o step-down)
+        if (detalle) for (u = [10 : 10 : P - 10], v = [-W / 2 + 10 : 10 : W / 2 - 10])
+            if (!(u > rpi[0] - 2 && u < rpi[0] + rpi[2] + 2 && v > rpi[1] - 2 && v < rpi[1] + rpi[3] + 2))
+                translate([u, v, -1]) cylinder(d = 2.8, h = caja_piso + 2, $fn = 12);
+    }
+    // postes para la Raspberry Pi (M2.5 autorroscante)
+    for (du = [3.5, 61.5], dv = [3.5, 52.5]) translate([rpi[0] + du, rpi[1] + dv, caja_piso - e])
+        difference() { cylinder(d = 6.5, h = 6); cylinder(d = 2.2, h = 7); }
+    // columnas de las esquinas para los tornillos de la tapa (M3 autorroscante)
+    for (u = [t, P - t - 8], v = [-W / 2 + t, W / 2 - t - 8]) translate([u, v, caja_piso - e])
+        difference() { cube([8, 8, H - caja_piso + e]); translate([4, 4, H - caja_piso - 14]) cylinder(d = 2.8, h = 15); }
+}
+
+// Vista del interior con las placas ubicadas (referencia, no se imprime)
+module placa(pos, alto, col, etiqueta, tam = 5) {
+    color(col) translate([pos[0], pos[1], caja_piso]) cube([pos[2], pos[3], alto]);
+    color("white") translate([pos[0] + pos[2] / 2, pos[1] + pos[3] / 2, caja_piso + alto]) linear_extrude(0.6)
+        rotate(pos[3] > pos[2] ? 90 : 0) text(etiqueta, size = tam, halign = "center", valign = "center", font = "Liberation Sans:style=Bold");
+}
+module caja_vista() {
+    color("#aeb6bf") caja_control();
+    color("#1e8449") for (du = [3.5, 61.5], dv = [3.5, 52.5]) translate([rpi[0] + du, rpi[1] + dv, caja_piso]) cylinder(d = 6.5, h = 6);
+    translate([0, 0, 6]) placa(rpi, 16, "#1e8449", "Raspberry Pi 4");
+    placa(tb6600_a, 33, "#2471a3", "TB6600 azimut");
+    placa(tb6600_b, 33, "#2471a3", "TB6600 altitud");
+    placa([8, -95, 24, 54], 18, "#b9770e", "Step-down", 4);
+    placa([8, -30, 24, 40], 14, "#7f8c8d", "Borneras", 4);
+    placa([10, 18, 20, 16], 4, "#117a65", "GY-91", 3.5);
+    placa([5, 48, 30, 38], 8, "#7d3c98", "GPS", 6);
+}
+
+module tapa_caja() {
+    W = caja_ancho; P = caja_prof; t = caja_pared;
+    difference() {
+        union() {
+            translate([0, -W / 2, 0]) cube([P, W, 3]);
+            // reborde que encaja dentro de la caja
+            difference() {
+                translate([t + 0.4, -W / 2 + t + 0.4, -2]) cube([P - 2 * t - 0.8, W - 2 * t - 0.8, 2 + e]);
+                translate([t + 2.4, -W / 2 + t + 2.4, -3]) cube([P - 2 * t - 4.8, W - 2 * t - 4.8, 4]);
+                for (u = [t, P - t - 8], v = [-W / 2 + t, W / 2 - t - 8]) translate([u - 1, v - 1, -3]) cube([10, 10, 4]);
+            }
+        }
+        for (u = [t + 4, P - t - 4], v = [-W / 2 + t + 4, W / 2 - t - 4]) translate([u, v, -5]) {
+            cylinder(d = 3.4, h = 10);
+            translate([0, 0, 5 + 3 - 1.8]) cylinder(d1 = 3.4, d2 = 6.6, h = 1.8 + e);
+        }
+        // hueco para pegar la antena cerámica del GPS por debajo (25 × 25 mm)
+        translate([rpi[0] + 30 - 13.5, -60 - 13.5, -1]) cube([27, 27, 2]);
+        // flecha "N": la montura se orienta con esta flecha (y el motor de azimut) hacia el norte
+        translate([20, 0, 3 - 1]) linear_extrude(1.5) {
+            polygon([[-14, 0], [0, 9], [0, 4], [14, 4], [14, -4], [0, -4], [0, -9]]);
+            translate([-30, 0]) rotate(90) text("N", size = 12, halign = "center", valign = "center", font = "Liberation Sans:style=Bold");
+        }
+    }
+}
+
+// ============================================================================
+//  11. PANEL DE ENERGÍA (va junto a la batería, colgado de una pata del trípode)
+//      Frente: paro de emergencia, interruptor general y voltímetro.
+//      El fusible va en línea, dentro, junto al borne positivo.
+//      Imprimir con el frente sobre la cama; la tapa trasera tiene ranuras para
+//      una correa de velcro.
+// ============================================================================
+panel = [120, 80, 60];               // ancho, alto, profundidad
+paro_d = 22.5;                        // pulsador de 22 mm (estándar)
+interruptor = [19.2, 12.9];           // (MEDIR) basculante KCD1 típico
+voltimetro = [45.5, 26.5];            // (MEDIR) voltímetro de panel de 0,56"
+
+module panel_energia() {
+    A = panel[0]; B = panel[1]; D = panel[2]; t = 3;
+    difference() {
+        translate([-A / 2, -B / 2, 0]) cube([A, B, D]);
+        translate([-A / 2 + t, -B / 2 + t, t]) cube([A - 2 * t, B - 2 * t, D]);
+        translate([-30, 8, -1]) cylinder(d = paro_d, h = t + 2);
+        translate([18, 18, -1]) translate([-interruptor[0] / 2, -interruptor[1] / 2, 0]) cube([interruptor[0], interruptor[1], t + 2]);
+        translate([18, -14, -1]) translate([-voltimetro[0] / 2, -voltimetro[1] / 2, 0]) cube([voltimetro[0], voltimetro[1], t + 2]);
+        // prensaestopas abajo: entrada de la batería y salidas (12 V lógica, 12 V motores)
+        for (x = [-35, 0, 35]) translate([x, -B / 2 - 1, D / 2]) rotate([-90, 0, 0]) cylinder(d = pg7, h = t + 2);
+    }
+    for (x = [-A / 2 + t, A / 2 - t - 8], y = [-B / 2 + t, B / 2 - t - 8]) translate([x, y, t - e])
+        difference() { cube([8, 8, D - t + e]); translate([4, 4, D - t - 14]) cylinder(d = 2.8, h = 15); }
+}
+
+module tapa_panel() {
+    A = panel[0]; B = panel[1]; t = 3;
+    difference() {
+        translate([-A / 2, -B / 2, 0]) cube([A, B, 4]);
+        for (x = [-A / 2 + t + 4, A / 2 - t - 4], y = [-B / 2 + t + 4, B / 2 - t - 4]) translate([x, y, -1]) cylinder(d = 3.4, h = 6);
+        // ranuras para la correa de velcro (25 mm)
+        for (x = [-30, 30]) translate([x - 2.5, -14, -1]) cube([5, 28, 6]);
+    }
+}
+
+// ============================================================================
 //  9. PIEZA DE PRUEBA: imprimir primero para comprobar que la correa engrana
 // ============================================================================
 module prueba_gt2() {
@@ -444,6 +584,11 @@ module ensamble() {
     color("#c0392b") translate([c_az, 0, 0.5]) linear_extrude(polea20_largo) perfil_gt2(20);
     color("#bdc3c7", 0.6) translate([-lazy_lado / 2, -lazy_lado / 2, 0]) cube([lazy_lado, lazy_lado, lazy_alto]);
     color("#2e86c1") plato_giratorio();
+    // caja de control en el lado −X (u → −X): espejo de las coordenadas locales
+    translate([-caja_r0, 0, caja_z0]) mirror([1, 0, 0]) {
+        caja_vista();
+        color("#aab7b8", 0.3) translate([0, 0, caja_alto + 30]) tapa_caja();   // tapa levantada para ver el interior
+    }
     color("#1b4f72") translate([0, brazo_y, plato_top]) zocalo_brazo();
     color("#d0d3d4") translate([-perfil_x / 2, brazo_y - perfil_y / 2, plato_top]) cube([perfil_x, perfil_y, perfil_largo]);
     translate([0, brazo_y, plato_top + perfil_largo]) {
@@ -479,3 +624,8 @@ else if (pieza == "soporte_motor_altitud") translate([0, 0, 40]) soporte_motor_a
 else if (pieza == "montura_vixen") montura_vixen();
 else if (pieza == "barra_vixen") barra_vixen();
 else if (pieza == "prueba_gt2") prueba_gt2();
+else if (pieza == "caja_control") caja_control();
+else if (pieza == "caja_vista") caja_vista();
+else if (pieza == "tapa_caja") translate([0, 0, 3]) rotate([180, 0, 0]) tapa_caja();
+else if (pieza == "panel_energia") panel_energia();
+else if (pieza == "tapa_panel") tapa_panel();
