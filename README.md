@@ -10,6 +10,7 @@
 |---|---|
 | [`docs/01-diagnostico-articulo.md`](docs/01-diagnostico-articulo.md) | Revisión del borrador frente a la guía de la revista, verificación de referencias, observaciones sobre el hardware, propuesta de IA y diseño experimental |
 | [`docs/02-componentes.md`](docs/02-componentes.md) | Revisión de los componentes comprados (factura): qué sirve, qué no y qué falta comprar |
+| [`docs/03-telescopio-montura-energia.md`](docs/03-telescopio-montura-energia.md) | Telescopio recomendado, diseño de la montura, baterías para campo y lista de compras definitiva |
 | [`prototipo/`](prototipo/README.md) | Software del prototipo: cálculo de planetas, control de motores, interfaz web, registro de pruebas y corrección por IA |
 
 Los documentos originales (borrador, plan, guía de la revista, proforma) están en el Drive.
@@ -21,9 +22,9 @@ Vamos paso a paso. ✅ = hecho en este repositorio.
 1. ✅ **Diagnóstico** del artículo, de las referencias y de la proforma.
 2. ✅ **Software del prototipo v0.1** en modo simulación: GoTo, interfaz web, registro de
    apuntados y corrección por IA (lineal frente a red neuronal), con 29 pruebas automáticas.
-3. 🟡 **Decidir el hardware final:** revisión de la factura hecha
-   ([docs/02](docs/02-componentes.md)). Pendiente: comprar la fuente de 24 V, el *step-down*
-   de 5 V, la microSD, las poleas GT2, los rodamientos y los fines de carrera; confirmar el telescopio.
+3. ✅ **Decidir el hardware final:** revisión de la factura ([docs/02](docs/02-componentes.md))
+   y decisiones de telescopio, montura y baterías ([docs/03](docs/03-telescopio-montura-energia.md)).
+   Pendiente: **comprar** según la lista definitiva y revisar tu diseño 3D actual.
 4. ⬜ **Armar la electrónica** y probar los motores en banco, con la Raspberry Pi y
    `config.json`.
 5. ⬜ **Montura impresa en 3D:** exportar las figuras (modelo 3D y esquema del circuito) para el artículo.

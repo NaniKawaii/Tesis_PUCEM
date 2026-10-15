@@ -1,5 +1,8 @@
 # Paso 2 · Revisión de los componentes comprados
 
+> ➡️ Las decisiones finales (telescopio, montura, batería LiFePO4 en lugar de la fuente de 24 V)
+> y la lista de compras definitiva están en [03-telescopio-montura-energia.md](03-telescopio-montura-energia.md).
+
 Fuente: factura de MEGATRONICA n.º 004-100-000009208 del 28/01/2026, por un total de
 USD 406,19 con IVA. Los precios de la sección "Qué falta" son **estimaciones aproximadas**
 para Ecuador y deben cotizarse.

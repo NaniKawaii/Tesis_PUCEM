@@ -65,11 +65,11 @@ las flechas → **Objeto centrado (registrar)**. Con 10 registros o más se pued
 | PUL+ (STEP) | GPIO 17 | GPIO 23 |
 | DIR+ | GPIO 27 | GPIO 24 |
 | ENA+ | GPIO 22 | GPIO 25 |
-| Fin de carrera (a GND) | GPIO 5 | GPIO 6 |
+| Fin de carrera (a GND) | — (límite por software ±270°) | GPIO 6 (2 interruptores en paralelo: −5° y 90°) |
 | PUL− / DIR− / ENA− | GND | GND |
 
 GPS NEO-6M: TX → GPIO 15 (RXD), RX → GPIO 14 (TXD), VCC 5 V, GND.
-⚠️ Los TB6600 necesitan **9–42 V**; ver `docs/01-diagnostico-articulo.md` §5.
+Alimentación: batería LiFePO4 de 12,8 V → TB6600 y *step-down* de 5,1 V → Raspberry Pi (ver `docs/03-telescopio-montura-energia.md`). Configurar los TB6600 en 16 micropasos y 1,5 A.
 
 ## Pruebas automáticas
 

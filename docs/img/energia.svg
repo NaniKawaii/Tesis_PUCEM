@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 400" font-family="Arial, Helvetica, sans-serif" font-size="13">
+  <rect width="860" height="400" fill="#ffffff"/>
+  <text x="430" y="28" text-anchor="middle" font-size="17" font-weight="bold" fill="#111">Alimentación con batería para campo</text>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker>
+  </defs>
+  <g stroke="#333" stroke-width="2" fill="none" marker-end="url(#fl)">
+    <line x1="150" y1="120" x2="188" y2="120"/>
+    <line x1="290" y1="120" x2="328" y2="120"/>
+    <line x1="430" y1="120" x2="468" y2="120"/>
+    <path d="M570 120 H600 V80 H628"/>
+    <path d="M570 120 H600 V160 H628"/>
+    <path d="M380 145 V230 H418"/>
+    <line x1="520" y1="255" x2="548" y2="255"/>
+    <path d="M680 245 H700 V188"/>
+  </g>
+  <g stroke="#333" stroke-width="1.5" fill="none" stroke-dasharray="5 4" marker-end="url(#fl)">
+    <path d="M680 268 H745 V100 H732"/>
+  </g>
+  <g font-weight="bold" text-anchor="middle">
+    <rect x="20" y="90" width="130" height="60" rx="6" fill="#d6ecd2" stroke="#2f7d32" stroke-width="2"/>
+    <text x="85" y="115">LiFePO4</text><text x="85" y="133" font-weight="normal">12,8 V · 12 Ah</text>
+    <rect x="190" y="95" width="100" height="50" rx="6" fill="#fdecea" stroke="#c0392b" stroke-width="2"/>
+    <text x="240" y="117">Fusible 7,5 A</text><text x="240" y="134" font-weight="normal">+ interruptor</text>
+    <rect x="330" y="95" width="100" height="50" rx="6" fill="#fdecea" stroke="#c0392b" stroke-width="2"/>
+    <text x="380" y="117">Voltímetro</text><text x="380" y="134" font-weight="normal">12 V (4S)</text>
+    <rect x="470" y="95" width="100" height="50" rx="6" fill="#fdecea" stroke="#c0392b" stroke-width="2"/>
+    <text x="520" y="117">Paro de</text><text x="520" y="134">emergencia</text>
+    <rect x="630" y="55" width="100" height="45" rx="6" fill="#e8eef7" stroke="#3b5b8f" stroke-width="2"/>
+    <text x="680" y="83">TB6600 Az</text>
+    <rect x="630" y="140" width="100" height="45" rx="6" fill="#e8eef7" stroke="#3b5b8f" stroke-width="2"/>
+    <text x="680" y="168">TB6600 Alt</text>
+    <rect x="420" y="230" width="100" height="50" rx="6" fill="#fff6d5" stroke="#8a6d00" stroke-width="2"/>
+    <text x="470" y="252">Step-down</text><text x="470" y="269" font-weight="normal">12 → 5,1 V 5 A</text>
+    <rect x="550" y="230" width="130" height="50" rx="6" fill="#ffffff" stroke="#333" stroke-width="2"/>
+    <text x="615" y="252">Raspberry Pi 4</text><text x="615" y="269" font-weight="normal">GPS · IMU · AS5600</text>
+  </g>
+  <text x="755" y="90" font-size="12" fill="#333">STEP/DIR/ENA</text>
+  <text x="755" y="106" font-size="12" fill="#333">(GPIO)</text>
+  <text x="20" y="330" fill="#333">El paro de emergencia corta solo los motores; la Raspberry Pi sigue encendida.</text>
+  <text x="20" y="352" fill="#333">Consumo estimado: ~18 W con los TB6600 en 1,5 A → la batería de 12 Ah (≈150 Wh) dura unas 7 h.</text>
+  <text x="20" y="374" fill="#333">Carga: cargador específico LiFePO4 de 14,6 V (no usar el de LiPo).</text>
+</svg>
