@@ -9,6 +9,7 @@ pynmea2>=1.19
 pyserial>=3.5
 # Solo en la Raspberry Pi (ya viene instalado en Raspberry Pi OS):
 # gpiozero>=2.0
+# smbus2>=0.4      (I²C: GY-91 y AS5600)
 
 # Para ejecutar las pruebas:
 pytest>=8

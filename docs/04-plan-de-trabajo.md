@@ -38,7 +38,7 @@ Las semanas son orientativas. Los pasos marcados con ⏩ pueden hacerse **en par
 | 3 | Ajustar los STL con esas medidas | Claude | 2 | 2 |
 | 4 | Impresión 3D (primero la pieza de prueba) | Nashla + imprenta | 3 | 2–3 |
 | 5 ⏩ | Instalar el software en la Raspberry Pi | Nashla + Claude | microSD | 2 |
-| 6 ⏩ | Esquema del circuito y prueba de motores en banco | Claude → Nashla | 1 | 3 |
+| 6 ⏩ | Esquema del circuito ✅ y prueba de motores en banco | Nashla | 1 | 3 |
 | 7 | Armado mecánico y balanceo | Nashla | 4, 6 | 4 |
 | 8 | Calibración y primeras pruebas nocturnas | Nashla + Claude | 5, 7 | 4–5 |
 | 9 | Experimentos E1/E2: ≥ 30 apuntados y entrenamiento de la IA | Nashla | 8 | 5–7 |
@@ -103,9 +103,9 @@ comando.
 
 ### 6. Circuito
 
-Te preparo el **esquema de conexiones completo**: Raspberry Pi, TB6600, GPS, GY-91, AS5600,
-fines de carrera y alimentación con fusible y paro de emergencia. Se arma primero **en banco,
-sin la montura**, y se prueba cada motor: sentido de giro, 16 micropasos y 1,5 A.
+✅ **Listo:** [`circuito/LEEME.md`](../circuito/LEEME.md) tiene el esquema, la tabla de
+conexiones cable por cable, la configuración de los TB6600 y una prueba de banco en 11 pasos
+con el programa `prueba_banco` (motores, fines de carrera, GPS, I²C, encoder y nivel).
 
 ### 9–10. Experimentos (los datos del artículo)
 

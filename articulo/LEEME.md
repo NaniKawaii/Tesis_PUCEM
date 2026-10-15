@@ -3,7 +3,7 @@
 `articulo_v2.docx` es el artículo reescrito según la guía de autores de **Esprint
 Investigación**: A4, márgenes de 2,5 cm, Times New Roman 12, interlineado 1,5, texto
 justificado, numeración de páginas, tablas solo con bordes horizontales, ecuaciones con el
-editor de Word, figuras con "Nota:" y referencias APA 7 en orden alfabético. Tiene 14
+editor de Word, figuras con "Nota:" y referencias APA 7 en orden alfabético. Tiene 15
 páginas (la revista pide de 10 a 20).
 
 > ⚠️ **Todo lo resaltado en amarillo `[[ ]]` es un dato pendiente.** Se completa
@@ -24,7 +24,7 @@ páginas (la revista pide de 10 a 20).
 | Hardware | Contradicciones (ESP32 frente a Raspberry Pi, correa frente a acople directo, fines de carrera no comprados) | Coherente con lo que se construye, explicando el cambio de ESP32 a Raspberry Pi |
 | Adaptabilidad | Solo un telescopio | **Universal:** cola de milano Vixen, telescopios de hasta 3 kg |
 | Referencias | 7, sin citas en el texto, 2 inexistentes y otras con datos erróneos | **15 verificadas**, con DOI cuando existe, todas citadas en el texto |
-| Figuras | Anunciadas pero inexistentes | 4 figuras: metodología, modelo 3D, alimentación e interfaz |
+| Figuras | Anunciadas pero inexistentes | 4 figuras: metodología, modelo 3D, esquema de conexiones e interfaz |
 
 ## Lo que tienes que completar
 
@@ -34,7 +34,6 @@ páginas (la revista pide de 10 a 20).
 3. **Después de las pruebas:** todos los `[[ ]]` de las secciones de resumen, resultados,
    discusión y conclusiones.
 4. **Figuras pendientes:**
-   - Esquema de conexiones (paso 6 del plan).
    - Captura de la interfaz real.
    - Figura 5, el diagrama de cajas que genera el script de análisis.
 5. **Verificar 2 referencias**, marcadas en el documento: la URL de OnStep y el año y las

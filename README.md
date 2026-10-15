@@ -13,6 +13,7 @@
 | [`docs/03-telescopio-montura-energia.md`](docs/03-telescopio-montura-energia.md) | Telescopio recomendado, diseño de la montura, baterías para campo y lista de compras definitiva |
 | [`docs/04-plan-de-trabajo.md`](docs/04-plan-de-trabajo.md) | **Plan paso a paso** (compras → impresión → circuito → software → pruebas → artículo) y cómo funciona el software (Raspberry Pi + web) |
 | [`articulo/`](articulo/LEEME.md) | **Artículo científico v2** en Word con el formato de la revista Esprint |
+| [`circuito/`](circuito/LEEME.md) | **Esquema de conexiones**, tabla pin por pin, configuración de los TB6600 y prueba de banco paso a paso |
 | [`montura/`](montura/LEEME.md) | **Piezas imprimibles en 3D** de la montura universal (OpenSCAD paramétrico + STL), guía de impresión y armado |
 | [`prototipo/`](prototipo/README.md) | Software del prototipo: cálculo de planetas, control de motores, interfaz web, registro de pruebas y corrección por IA |
 
@@ -24,12 +25,12 @@ Vamos paso a paso. ✅ = hecho en este repositorio.
 
 1. ✅ **Diagnóstico** del artículo, de las referencias y de la proforma.
 2. ✅ **Software del prototipo v0.1** en modo simulación: GoTo, interfaz web, registro de
-   apuntados y corrección por IA (lineal frente a red neuronal), con 29 pruebas automáticas.
+   apuntados y corrección por IA (lineal frente a red neuronal), con 37 pruebas automáticas.
 3. ✅ **Decidir el hardware final:** revisión de la factura ([docs/02](docs/02-componentes.md))
    y decisiones de telescopio, montura y baterías ([docs/03](docs/03-telescopio-montura-energia.md)).
    Pendiente: **comprar** según la lista definitiva y revisar tu diseño 3D actual.
-4. ⬜ **Armar la electrónica** y probar los motores en banco, con la Raspberry Pi y
-   `config.json`.
+4. 🟡 **Electrónica:** esquema de conexiones y programa de prueba de banco listos
+   ([circuito/](circuito/LEEME.md)). Pendiente: armar y ejecutar las 11 pruebas.
 5. 🟡 **Montura impresa en 3D:** piezas diseñadas y verificadas sin interferencias
    ([montura/](montura/LEEME.md)). Pendiente: imprimir la pieza de prueba GT2, imprimir todo y armar.
 6. ⬜ **Noches de prueba (E1, E2):** ≥ 30 apuntados registrados y entrenamiento y evaluación de la IA.
