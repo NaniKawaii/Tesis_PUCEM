@@ -13,6 +13,7 @@
 | [`docs/03-telescopio-montura-energia.md`](docs/03-telescopio-montura-energia.md) | Telescopio recomendado, diseño de la montura, baterías para campo y lista de compras definitiva |
 | [`docs/04-plan-de-trabajo.md`](docs/04-plan-de-trabajo.md) | **Plan paso a paso** (compras → impresión → circuito → software → pruebas → artículo) y cómo funciona el software (Raspberry Pi + web) |
 | [`docs/05-lista-para-proveedor.md`](docs/05-lista-para-proveedor.md) | **Lista de compras para el proveedor**: solo lo que falta, con especificaciones y cantidades |
+| [`docs/06-revision-proforma.md`](docs/06-revision-proforma.md) | **Revisión de la proforma de Megatrónica**: qué comprar, qué cambiar, qué no comprar y qué falta |
 | [`articulo/`](articulo/LEEME.md) | **Artículo científico v2** en Word con el formato de la revista Esprint |
 | [`circuito/`](circuito/LEEME.md) | **Esquema de conexiones**, tabla pin por pin, configuración de los TB6600, prueba de banco paso a paso y **plano de cableado dentro de la caja** |
 | [`montura/`](montura/LEEME.md) | **Piezas imprimibles en 3D** de la montura universal (OpenSCAD paramétrico + STL), guía de impresión y armado |
