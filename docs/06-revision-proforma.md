@@ -1,5 +1,7 @@
 # Revisión de la proforma 000004629 (Megatrónica, 21/10/2026)
 
+> ✅ **El proveedor envió una V2 el 24/10/2026 que corrige todo lo señalado. El veredicto final y el plan para lo que no tienen están en el [§7](#7-proforma-v2-24102026).** Lo que sigue es la revisión de la primera versión.
+
 Proforma de **Megatrónica** (Sebastián Chamorro) a nombre de AFIFSYSTEMS S.A.S.
 Subtotal USD 172,30 · IVA 15 % USD 25,84 · **Total USD 198,14**. Validez: 15 días.
 
@@ -202,3 +204,107 @@ Malla o espiral para cables de 10 mm (2 m) y correa de velcro de 25 mm (1 m).
 Esta proforma, igual que la factura de los componentes, está a nombre de **AFIFSYSTEMS
 S.A.S.** Hay que decidir qué se declara en "Fuente de financiamiento" y en "Conflicto de
 interés" del artículo (ya está marcado en el borrador).
+
+---
+
+## 7. Proforma V2 (24/10/2026)
+
+**Veredicto: aprobar.** Las 17 líneas son correctas. Subtotal USD 89,25 · IVA USD 13,39 ·
+**Total USD 102,64**.
+
+Qué cambió respecto de la V1:
+
+| Punto que se pidió | Resultado |
+|---|---|
+| Correas cerradas de 600 y 280 mm | ✅ **Resuelto**: 2 correas cerradas de **610 y 280 mm** |
+| Cable 18 AWG rojo y negro a 4 m | 🟡 Lo subieron a **3 m** de cada uno |
+| Quitar el cargador iMAX B6 | ✅ Quitado |
+| Quitar el filamento PETG | ✅ Quitado |
+| Perfil 2040 en lugar de 2020 | ❌ **No lo tienen** (y quitaron también el 2020) |
+| Cable USB-C en lugar del USB A-A | ❌ **No lo tienen** |
+
+> **La correa de azimut es de 610 mm, no de 600.** La distancia entre ejes pasa de 121,9 a
+> **128,3 mm**, que entra holgada en las ranuras del soporte del motor (admiten de 116 a
+> 133 mm). No hay que cambiar ninguna pieza impresa.
+
+**Dos cosas pequeñas antes de aprobar** (no son bloqueantes):
+
+1. Subir el cable 18 AWG rojo a **4 m** (son 39 centavos más). Con 3 m queda justo: batería →
+   panel, panel → caja y el tramo interno de la caja suman unos 3,4 m de cable rojo.
+2. Preguntar si **todavía tienen el perfil 2020** que cotizaron en la V1, por si no aparece
+   el 2040 en otro lado.
+
+---
+
+## 8. Lo que no tienen y dónde conseguirlo
+
+El proveedor avisó que **lo que no está en la proforma es lo que no tiene**. Hay que
+conseguir estos ítems en otro lado. Ninguno es raro; la mayoría está en ferreterías.
+
+### Críticos (sin esto el prototipo no se mueve)
+
+| Ítem | Dónde buscarlo | Si no aparece |
+|---|---|---|
+| **2 poleas GT2 de 20 dientes, agujero de 8 mm, ancho de 6 mm** | Tiendas de impresión 3D y CNC (Quito y Guayaquil), Mercado Libre | Avísame: se pueden imprimir, pero una polea impresa de 20 dientes con agujero de 8 mm queda con paredes de 2 mm y es la pieza que más esfuerzo recibe |
+| **Perfil de aluminio 2040 (20 × 40 mm), 300 mm** | Distribuidores de perfil estructural, tiendas de CNC e impresión 3D | Ver "Decisión 1" abajo |
+| **Rodamiento giratorio "lazy susan" de 4″ (102 mm)** | Ferretería, sección de herrajes para muebles ("base giratoria para mesa") | Avísame |
+| **Batería y su cargador** | Ver "Decisión 2" abajo | — |
+| **Trípode de topografía con rosca 5/8″** | Tiendas de topografía y construcción | Un trípode de cámara robusto con adaptador de 5/8″ a 1/4″ |
+| **10 tuercas en T M5** | Donde consigas el perfil | **Tuercas M5 hexagonales comunes**: entran por el extremo de la ranura y giran para trabar |
+| **Tornillería M5, M4, M3 y 1/4″-20** | Ferretería | — |
+| **Macho de roscar M5 con mango** | Ferretería | — |
+| **Tuerca hexagonal 5/8″-11 UNC** | Ferretería | Viene con algunos trípodes |
+
+### Importantes, con buen reemplazo
+
+| Ítem | Dónde buscarlo | Reemplazo que sirve igual |
+|---|---|---|
+| Portafusible en línea + fusibles de 7,5 A | **Repuestos automotrices** (fusible de cuchilla) | — |
+| HAT de borneras de tornillo para Raspberry Pi | Tiendas de electrónica, Mercado Libre | Placa perforada con borneras soldadas sobre un conector hembra de 40 pines |
+| 3 conectores Wago 221-415 | Material eléctrico | **Regleta de borneras** (bornera de paso) de 10 A |
+| Cable apantallado de 6 hilos y cable multifilar de señal | — | **Cable de red UTP o FTP (Cat5e)**: trae 4 pares trenzados de 24 AWG, rechaza bien el ruido de los motores y se consigue en cualquier lado. Es un reemplazo mejor que bueno |
+| Cable de 4 hilos de silicona 20 AWG (motores) | Electrónica | 4 cables flexibles sueltos de 20 AWG, trenzados y metidos en malla |
+| Cable USB-C | Cualquier tienda de celulares | Se compra un cable USB-C común y se le corta un extremo |
+| Imán diametral de 6 × 2,5 mm | Mercado Libre, tiendas de imanes | **No es bloqueante**: el AS5600 mide el ángulo real de altitud, que es un dato extra para el artículo, no algo que el sistema necesite para funcionar. Ojo: tiene que ser **diametral**, no axial |
+| Bridas plásticas, tapones PG7, velcro, malla para cables | Ferretería | Un prensaestopas de reserva se sella apretándolo sobre un trozo de filamento |
+
+---
+
+## 9. Dos decisiones pendientes
+
+### Decisión 1 · El brazo: perfil 2040 o 2020
+
+| | 2040 (diseño actual) | 2020 (lo que tenían) |
+|---|---|---|
+| Rigidez en la dirección del peso | referencia | **la mitad** |
+| Rigidez en la dirección del giro | referencia | **8 veces menos** |
+| Sujeción del cabezal | 2 tornillos M5 en el extremo | 1 solo tornillo |
+| Flexión estimada del brazo con 3 kg | ≈ 1,8′ | ≈ 3,6′ |
+
+El 2020 **no arruina el proyecto**: esa flexión es sistemática y repetible, o sea justo el
+tipo de error que el modelo de aprendizaje automático está hecho para corregir, y de hecho
+daría un resultado interesante para el artículo. Pero empezar con el doble de flexión, en un
+trabajo cuyo objetivo es la precisión de apuntado, es arrancar cuesta arriba.
+
+➡️ **Recomendación:** buscar el 2040 junto con las poleas GT2 y el lazy susan, que de todos
+modos hay que comprar en otro lado. Si no aparece, me avisas y reparametrizo el diseño para
+2020 (es cambiar una variable y regenerar los STL).
+
+### Decisión 2 · La batería
+
+| | LiFePO4 12,8 V 12 Ah (diseño actual) | Plomo-ácido sellada 12 V 7 Ah |
+|---|---|---|
+| Dónde se consigue | Importada o tiendas especializadas | **Cualquier lado**: es la batería de alarmas y UPS |
+| Precio con cargador | USD 60–95 | USD 30–40 |
+| Autonomía | ~7 h | ~3–4 h |
+| Peso | ~1,5 kg | ~2,2 kg |
+| Voltaje | 14,6 V a 10 V: dentro del rango del TB6600 | 13,8 V a 10,5 V: también dentro del rango |
+
+La de plomo-ácido pesa más, pero va colgada entre las patas del trípode haciendo de
+contrapeso, así que el peso extra no estorba. Y 3–4 horas alcanzan de sobra para una sesión
+de observación.
+
+➡️ **Recomendación:** si la LiFePO4 no aparece rápido, **arrancar con la de plomo-ácido de
+12 V y 7 Ah**. Permite empezar las pruebas de inmediato y se puede cambiar después sin tocar
+nada del diseño. Si se queda la de plomo-ácido, hay que ajustar en el artículo la Tabla 1 y
+la sección de energía.
