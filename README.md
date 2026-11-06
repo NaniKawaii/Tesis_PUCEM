@@ -8,6 +8,7 @@
 
 | Carpeta | Qué hay |
 |---|---|
+| [`MEMORIA.md`](MEMORIA.md) | **Memoria del artículo**: decisiones vigentes de Nashla (enfoque con cámara, IA en 3 papeles, 3 formas de entrenar, hardware, bibliografía) |
 | [`docs/01-diagnostico-articulo.md`](docs/01-diagnostico-articulo.md) | Revisión del borrador frente a la guía de la revista, verificación de referencias, observaciones sobre el hardware, propuesta de IA y diseño experimental |
 | [`docs/02-componentes.md`](docs/02-componentes.md) | Revisión de los componentes comprados (factura): qué sirve, qué no y qué falta comprar |
 | [`docs/03-telescopio-montura-energia.md`](docs/03-telescopio-montura-energia.md) | Telescopio recomendado, diseño de la montura, baterías para campo y lista de compras definitiva |
