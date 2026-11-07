@@ -307,6 +307,74 @@ es lo que hace que las semanas 1 a 6 sean productivas sin hardware.
 
 Sobre `astro.py`, `montura.py` y `correccion.py`, que ya existen, esto son unas 200 líneas.
 
+### Cómo se transfiere lo aprendido: primer intento fallido y reparación
+
+Medido el 06/11/2026 al implementar `aprendizaje.py`. **Hay que decidir esto antes de las
+noches reales**, porque cambia el método.
+
+**Lo que se probó primero: transferencia por residuo.** El modelo entrenado en simulación
+predice, su predicción se usa como desplazamiento fijo, y el modelo ajustado con datos reales
+aprende lo que queda. Se eligió así para que el mecanismo fuera **el mismo para los tres
+modelos** y la comparación entre ellos no mezclara dos efectos.
+
+**Resultado: empeora, en todos los casos.** Con 20 monturas sintéticas y 8 noches reales
+simuladas:
+
+| Noches reales | Solo real (′) | Preentrenado + ajuste (′) |
+|---|---|---|
+| 1 | 4,29 | 5,24 |
+| 3 | 3,72 | 4,91 |
+| 5 | 3,08 | 4,79 |
+| 7 | 2,74 | 4,42 |
+
+**Diagnóstico.** La correlación entre lo que predice el modelo preentrenado y lo que habría
+que predecir es **−0,003 en azimut y +0,031 en altitud**: cero. Y mientras tanto inyecta 2,3′
+de desplazamiento sobre un objetivo de 2 a 3,7′. O sea: ruido puro.
+
+La razón es estructural, no de ajuste de hiperparámetros:
+
+> Un modelo que **no puede observar a qué montura se enfrenta** solo puede predecir la media
+> de la familia. Y la media de la familia no es ninguna montura concreta. Conocer la
+> distribución no dice nada sobre el ejemplar que te tocó.
+
+Esto invalida el preentrenamiento **incondicional**, no la idea de preentrenar.
+
+**La reparación: condicionar con un sondeo.** La entrada del modelo incluye el error medido en
+un puñado de puntos de sondeo de la montura que tiene delante. Así el preentrenamiento sobre
+miles de monturas sintéticas enseña algo que sí se transfiere: *"dado este patrón de error en
+estos puntos, el error en el resto del cielo se ve así"*. Es calibración amortizada.
+
+**Prueba de concepto, con 6 puntos de sondeo:**
+
+| | Sin condicionamiento | Con sondeo |
+|---|---|---|
+| Correlación en azimut | −0,003 | **+0,66** |
+| Correlación en altitud | +0,031 | **+0,44** |
+| RMS en azimut | 3,70′ | **2,86′** |
+
+Y ese 2,86′ se consigue con **cero noches reales de entrenamiento**: solo los 6 puntos de
+sondeo. (En altitud todavía no mejora el RMS pese a la correlación: falta ajuste.)
+
+**Qué cambia para el artículo, si se adopta.** La pregunta se afila y mejora: de *"¿cuántas
+noches hacen falta?"* a *"¿cuántas medidas hacen falta?"*. Si bastan unos minutos de sondeo al
+empezar la sesión en lugar de noches enteras de datos, el método pasa a ser **utilizable en
+campo**, que es justo el argumento de §3 sobre la montura que se vuelve a nivelar cada
+atardecer. También encaja mejor en 15 semanas, porque reduce la dependencia del número de
+noches.
+
+**Qué cuesta.** Hay que rehacer el mecanismo de transferencia de `aprendizaje.py` y decidir
+cómo se obtienen los puntos de sondeo en el protocolo real (apuntando a posiciones conocidas
+al empezar la noche, que es lo mismo que la alineación pero con más puntos).
+
+> El resultado negativo **no se tira**: queda fijado como prueba automática
+> (`test_la_transferencia_por_residuo_no_aporta_sobre_una_familia_centrada`) y es material
+> para la Discusión. Que el preentrenamiento incondicional no sirva para este problema es un
+> hallazgo con valor propio, y además refuerza el ítem 25 de la rúbrica.
+
+**Lo importante del calendario:** esto se descubrió en la semana 1, con datos simulados, y no
+en la semana 12 con los datos reales ya tomados. Es exactamente para lo que sirve construir el
+simulador primero.
+
 ---
 
 ## 5. Datos

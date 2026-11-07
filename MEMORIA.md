@@ -173,3 +173,13 @@ real entre enero y abril.
   `MEMORIA.md` (alcance de 3 módulos x 3 modelos x 3 formas de entrenar, ya superado) y una
   línea del README que esta rama ya tiene. La rama `claude/project-thread-zcrk5b` queda en el
   remoto como registro histórico. Este archivo pasa a ser la única fuente de verdad.
+- **2026-11-06 (tarde):** `aprendizaje.py` con los cuatro modelos (clásico, Ridge, boosting,
+  MLP), alineación por sesión, validación dejando una noche fuera, curva de aprendizaje y
+  Friedman + Nemenyi. Se usa `HistGradientBoostingRegressor` de scikit-learn en lugar de
+  LightGBM: es el mismo algoritmo, ya es dependencia y evita compilar en la Raspberry Pi.
+  **Resultado negativo medido:** la transferencia por residuo **empeora** el error en todos
+  los casos, porque un modelo preentrenado sobre monturas diversas solo puede predecir la
+  media de la familia (correlación −0,003 con el error real). **Reparación probada:**
+  condicionar el modelo con 6 puntos de sondeo sube la correlación a +0,66 y baja el error de
+  azimut de 3,70' a 2,86' sin ninguna noche real. **Pendiente de la decisión de Nashla**,
+  porque cambia el método de `docs/08` §4.
