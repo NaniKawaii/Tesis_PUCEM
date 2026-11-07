@@ -1,8 +1,13 @@
 """Configuración del sistema: sitio de observación, ejes de la montura y rutas.
 
-Los valores por defecto corresponden a la proforma de la tesis
-(Raspberry Pi 4, drivers TB6600, motores NEMA 23 con acople directo).
-Se pueden sobrescribir con un archivo JSON (ver config.ejemplo.json).
+Los valores por defecto corresponden a la montura que se construye: Raspberry Pi 4, drivers
+TB6600 a 16 micropasos, motores NEMA 23 y las **reducciones de docs/03**, 14:1 en azimut y
+5:1 en altitud. Se pueden sobrescribir con un archivo JSON (ver config.ejemplo.json).
+
+Los valores por defecto describían el acople directo del diseño inicial (reducción 1:1), que
+quedó descartado. Como `servidor.py` y `prueba_banco.py` cargan la configuración por defecto
+cuando no se les pasa `--config`, ese valor obsoleto hacía que cada movimiento saliera 14
+veces corto en azimut y 5 en altitud. Corregido el 06/11/2026.
 """
 
 from __future__ import annotations
@@ -52,12 +57,14 @@ class Eje:
 
 
 def _eje_az() -> Eje:
-    return Eje(nombre="azimut", min_grados=-270.0, max_grados=270.0,
+    # Reducción 14:1 -> 124,4 micropasos por grado -> 0,48' por micropaso.
+    return Eje(nombre="azimut", reduccion=14.0, min_grados=-270.0, max_grados=270.0,
                pin_step=17, pin_dir=27, pin_enable=22, pin_fin_carrera=5)
 
 
 def _eje_alt() -> Eje:
-    return Eje(nombre="altitud", min_grados=-5.0, max_grados=90.0,
+    # Reducción 5:1 -> 44,4 micropasos por grado -> 1,35' por micropaso.
+    return Eje(nombre="altitud", reduccion=5.0, min_grados=-5.0, max_grados=90.0,
                pin_step=23, pin_dir=24, pin_enable=25, pin_fin_carrera=6)
 
 

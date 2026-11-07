@@ -4,9 +4,11 @@ from telescopio.montura import diferencia_angular
 from telescopio.motores import FinDeCarrera
 
 
-def test_resolucion_por_defecto_acople_directo(cfg):
-    # 200 pasos × 16 micropasos = 3200 por vuelta -> 6,75 minutos de arco por micropaso
-    assert cfg.az.resolucion_arcmin == pytest.approx(6.75)
+def test_resolucion_por_defecto_usa_las_reducciones_reales(cfg):
+    # 200 pasos × 16 micropasos × 14 de reducción = 124,4 micropasos por grado -> 0,48'
+    assert cfg.az.resolucion_arcmin == pytest.approx(0.482, abs=1e-3)
+    # En altitud la reducción es 5:1 -> 44,4 micropasos por grado -> 1,35'
+    assert cfg.alt.resolucion_arcmin == pytest.approx(1.35, abs=1e-3)
 
 
 def test_no_mueve_sin_referencia(montura):

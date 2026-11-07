@@ -242,6 +242,29 @@ La analogía que lo deja claro: alguien que ha visto miles de caras necesita dos
 reconocer a una persona nueva. Alguien que nunca ha visto una cara necesita muchísimas más.
 El pre-entrenamiento no te enseña tu montura: te enseña *qué es una montura*.
 
+#### La cobertura del cielo, medida
+
+Que "una noche es un arco, no la bóveda" dejó de ser una forma de hablar: se midió al escribir
+las pruebas del simulador el 06/11/2026. Se generó la misma montura con y sin los efectos no
+lineales, se ajustó el modelo clásico completo a cada caso y se comparó el residuo:
+
+| Duración de la sesión | Recorrido en azimut | Residuo sin efectos no lineales | Residuo con ellos | Razón |
+|---|---|---|---|---|
+| 0,3 h | 6,7° | 0,73′ | 0,76′ | **1,04** |
+| 4 h | 80° | 0,82′ | 2,55′ | **3,13** |
+| 8 h | 160° | 0,71′ | 2,10′ | 2,98 |
+
+**Sobre un arco corto los efectos no lineales son indistinguibles del modelo lineal.** Media
+vuelta de polea parece una rampa; cos²(alt) sobre 4° parece una constante; la holgura que
+depende de la carga parece holgura a secas. El modelo lineal los absorbe y el residuo no crece.
+
+Es la forma matemática del argumento: **lo que limita el aprendizaje no es el número de filas
+—sobran, 20 000 por noche— sino la cobertura del cielo.** Por eso hacen falta varias noches, y
+por eso la pregunta de cuántas tiene sentido como pregunta de investigación.
+
+Queda fijado como prueba automática (`test_un_arco_corto_no_deja_ver_la_no_linealidad`), y es
+un resultado reportable en la Metodología para justificar la duración mínima de cada sesión.
+
 ### "¿Y si el trípode funciona bien?"
 
 Dos respuestas, y conviene tenerlas a mano para la defensa:

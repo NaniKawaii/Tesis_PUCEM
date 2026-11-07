@@ -16,6 +16,7 @@
 | [`docs/06-revision-proforma.md`](docs/06-revision-proforma.md) | **Revisión de la proforma de Megatrónica**: qué comprar, qué cambiar, qué no comprar y qué falta |
 | [`docs/07-rubrica-lector.md`](docs/07-rubrica-lector.md) | **La rúbrica del lector**: cómo se calcula la nota (máximo 30 puntos), dónde está el peso y qué debe decir cada sección para que el ítem salga "Sí" |
 | [`docs/08-diseno-definitivo.md`](docs/08-diseno-definitivo.md) | ⭐ **Diseño definitivo del artículo**: el aporte, la brecha confirmada en Scopus, la arquitectura de la IA, el simulador, los experimentos, la estadística y el cronograma de 15 semanas |
+| [`docs/09-manos-a-la-obra.md`](docs/09-manos-a-la-obra.md) | ⭐ **Quién hace qué y en qué orden**: los tres frentes en paralelo, los módulos de software por escribir, tus pasos semana a semana y las medidas que hacen falta |
 | [`MEMORIA.md`](MEMORIA.md) | **Decisiones vigentes** del artículo, con su historial fechado |
 | [`articulo/`](articulo/LEEME.md) | **Artículo científico v2** en Word con el formato de la revista Esprint |
 | [`circuito/`](circuito/LEEME.md) | **Esquema de conexiones**, tabla pin por pin, configuración de los TB6600, prueba de banco paso a paso y **plano de cableado dentro de la caja** |

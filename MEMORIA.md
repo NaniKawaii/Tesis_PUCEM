@@ -156,3 +156,16 @@ real entre enero y abril.
 - **2026-11-06 (tarde):** se fija el **título** (17 palabras) y se documenta en `docs/08` §1 la
   comprobación de que el trabajo cumple los criterios de un artículo de investigación original,
   con la frontera explícita entre lo que ya es conocimiento establecido y lo que aporta.
+- **2026-11-06 (tarde):** se reparte el trabajo en `docs/09-manos-a-la-obra.md` (tres frentes en
+  paralelo; el de software no depende del hardware). Al revisar `prototipo/` aparecen tres
+  desajustes que hay que corregir antes de generar datos: la reducción está en acople directo
+  (1.0 en vez de 14:1 y 5:1), la validación cruzada parte las filas al azar en vez de dejar una
+  noche fuera, y el esquema del registro es por apuntado en vez de por segundo. `docs/04` queda
+  marcado como superado en su plan, aunque sigue vigente su parte técnica.
+- **2026-11-06 (tarde):** primer código del enfoque nuevo: `errores.py` (modelo paramétrico
+  compartido por el simulador y la alineación), `simulador.py` (aleatorización de dominio),
+  `registro.py` con el esquema por segundo, y corrección de la reducción por defecto en
+  `config.py`, que estaba en acople directo. 60 pruebas en verde. Al escribir las pruebas se
+  midió que **sobre un arco corto los efectos no lineales son indistinguibles del modelo
+  lineal** (razón 1,04 en 20 minutos frente a 3,13 en 4 horas): la cobertura del cielo, y no el
+  número de filas, es lo que limita el aprendizaje. Queda en `docs/08` §4.

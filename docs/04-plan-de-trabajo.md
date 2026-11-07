@@ -1,5 +1,11 @@
 # Paso 5 · Plan de trabajo: de las compras al envío del artículo
 
+> ⚠️ **Superado por [`09-manos-a-la-obra.md`](09-manos-a-la-obra.md)** (06/11/2026). El plan
+> paso a paso y el calendario de este documento corresponden al enfoque anterior (telescopio,
+> 30 apuntados manuales, estudio de usabilidad con 20 participantes). **Sigue vigente** todo lo
+> técnico: cómo funciona el software en la Raspberry Pi y la interfaz web (abajo), las medidas
+> que hay que tomar con calibrador, la instalación en la Pi y el encargo de la impresión 3D.
+
 ## ¿El software va en la Raspberry Pi o es web? → **Las dos cosas**
 
 ```
