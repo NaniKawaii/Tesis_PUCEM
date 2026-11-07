@@ -17,8 +17,13 @@ Navegador (PC / celular)  ──HTTP──▶  servidor.py (FastAPI)
                                      sistema.py  ── orquesta el flujo GoTo → centrado → registro
               ┌──────────────┬───────────┼─────────────┬──────────────┐
           astro.py       montura.py  correccion.py   registro.py     gps.py
-       (Skyfield, DE421)  (ángulos ↔ pasos,  (IA: lineal / MLP,  (CSV con cada    (NEO-6M,
-                           límites)       validación cruzada)  apuntado)       NMEA)
+       (Skyfield, DE421)  (ángulos ↔ pasos,  (IA de la v0.1,   (CSV: apuntados  (NEO-6M,
+                           límites)        ver la tabla)     y seguimiento)   NMEA)
+
+  Aparte del lazo de control, el pipeline del artículo:
+      errores.py  ──▶  simulador.py  ──▶  aprendizaje.py  ──▶  analisis/
+     (modelo del      (noches           (alineación,          (tablas del
+      error)           sintéticas)       modelos, estadística)  artículo)
                               │
                          motores.py  ── rampa de aceleración, MotorSimulado / MotorTB6600 (GPIO)
 ```
@@ -29,7 +34,11 @@ Navegador (PC / celular)  ──HTTP──▶  servidor.py (FastAPI)
 | `astro.py` | Altitud y azimut aparentes de Mercurio, Venus, la Luna, Marte, Júpiter, Saturno, Urano y Neptuno |
 | `motores.py` | Perfil trapezoidal de velocidad para no perder pasos; pulsos STEP/DIR/ENA; fines de carrera |
 | `montura.py` | Conversión de grados a pasos, camino más corto en azimut, límites mecánicos, movimiento simultáneo de los 2 ejes |
-| `correccion.py` | **Componente de IA**: aprende el error sistemático de apuntado (regresión lineal frente a red neuronal MLP), validación cruzada y prueba de Wilcoxon |
+| `correccion.py` | IA de la **v0.1**, todavía usada por `sistema.py` y `servidor.py`. Parte las filas al azar, que para datos por segundo infla el resultado: **no usar para el artículo**. Se retira cuando la interfaz migre a `aprendizaje.py` |
+| `errores.py` | El modelo de error paramétrico, **compartido**: el simulador lo usa para generar el error y la alineación para ajustarlo. Una sola definición de los términos |
+| `simulador.py` | Aleatorización de dominio: muestrea monturas sintéticas y genera noches, con efectos **no lineales** que el modelo clásico no puede representar |
+| `aprendizaje.py` | **El pipeline del artículo**: alineación por sesión, modelo clásico, Ridge / boosting / MLP sobre el residuo, validación dejando una noche fuera, Friedman + Nemenyi y Wilcoxon |
+| `analisis/` | Los experimentos que producen las tablas del artículo. Ver [`analisis/LEEME.md`](analisis/LEEME.md) |
 | `registro.py` | CSV `datos/registro_apuntado.csv`: los datos crudos para el artículo |
 | `gps.py` | Ubicación y hora desde el GPS (la Raspberry Pi no tiene reloj con batería) |
 | `sistema.py` | Flujo completo: GoTo, ajuste fino, confirmación del centrado, seguimiento, entrenamiento de la IA |

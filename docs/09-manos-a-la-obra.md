@@ -96,12 +96,22 @@ la impresora, el software del artículo ya se está escribiendo y validando.
 
 Todo dentro de `prototipo/`. Cada módulo se entrega con sus pruebas automáticas.
 
+**Estado al 07/11/2026:** hechos los módulos 1, 2, 3 y 4, y el primer script del 6
+(`analisis/e5_transferencia.py`). 101 pruebas en verde. Pendientes: 5, el resto del 6, y 7 a 10.
+
+> ⚠️ **Lo que cambió el 07/11/2026.** El módulo 4 se escribió como `aprendizaje.py` (no
+> rehaciendo `correccion.py`, que la interfaz web todavía importa), y el preentrenamiento en
+> simulación **se descartó con mediciones**: ver `docs/08` §4. Eso no cambia nada de tu lista
+> de la §5 —la montura, los motores, el circuito y las noches de observación son los mismos—
+> pero sí cambia el aporte, la pregunta y el título del artículo, que están marcados para
+> hablarlos con el Ing. Corrales. Añádelo a la conversación que ya tienes pendiente con él.
+
 | # | Archivo | Qué hace | Bloquea a |
 |---|---|---|---|
 | **1** | `telescopio/errores.py` | **El modelo de error paramétrico.** Dado (az, alt), un vector de parámetros y el estado (sentido de giro, temperatura), devuelve Δaz y Δalt | 2, 3, 5 |
 | **2** | `telescopio/simulador.py` | **Aleatorización de dominio.** Muestrea vectores de parámetros, genera noches sintéticas con posiciones reales de Skyfield y escribe el dataset | 4 |
 | **3** | `telescopio/registro.py` (ampliar) | Esquema nuevo de una fila por segundo. **El simulador y el registrador real escriben el mismo formato** | 4 |
-| **4** | `telescopio/correccion.py` (rehacer) | Los cuatro modelos, validación dejando una noche fuera, preentrenamiento más ajuste fino, Friedman y Nemenyi | 6 |
+| **4** | `telescopio/aprendizaje.py` | Los cuatro modelos, validación dejando una noche fuera, Friedman y Nemenyi | 6 |
 | **5** | `telescopio/alineacion.py` | Calibración de sesión: ajusta por mínimos cuadrados los términos de sesión con 2 o 3 puntos más la lectura del GY-91 | noches |
 | **6** | `analisis/` | Scripts que generan **las tablas y figuras del artículo** (E1 a E5) directamente desde el CSV | redacción |
 | 7 | `telescopio/camara.py` | Captura de fotogramas y volcado del dataset de imágenes | cuando haya cámara |

@@ -19,15 +19,51 @@ La alineación de sesión va primero porque sus términos cambian en cada montaj
 entrenara sobre el error crudo, el modelo intentaría memorizar los desfases de una noche que
 no sirven para otra, y la validación dejando una noche fuera dejaría de ser válida.
 
-Transferencia
--------------
-El preentrenamiento se transfiere **por residuo**, igual para los tres modelos: la predicción
-del modelo entrenado en simulación se usa como desplazamiento fijo, y el modelo ajustado con
-datos reales aprende lo que queda.
+Lo que sí funciona, medido
+--------------------------
+El corrector aprendido sobre datos reales **vence al modelo clásico en 6 de 6 sorteos
+independientes** (mediana 3,93′ → 3,50′; 4 de 6 con p < 0,05). Esa es la afirmación del
+artículo. Se reproduce con:
 
-Que el mecanismo sea el mismo para todos es deliberado. Si cada modelo usara su propia forma
-de transferir (reinicio en caliente para la red, prior para Ridge, árboles añadidos para el
-boosting), la comparación entre modelos mezclaría dos efectos y no se sabría cuál manda.
+    python -P analisis/e5_transferencia.py --sorteos 6 --sondeo 0 --monturas 2
+
+El preentrenamiento no funciona: está apagado
+---------------------------------------------
+**Resultado negativo, medido el 07/11/2026.** Se probaron tres variantes y ninguna se sostiene:
+
+1. **Transferencia por residuo, sin condicionar.** El modelo entrenado en simulación predice y
+   su predicción se usa como desplazamiento fijo. No puede funcionar, y es una identidad, no
+   una medición: dos monturas distintas apuntadas a las mismas posiciones producen las
+   **mismas** entradas, así que el modelo predice lo mismo para las dos. Solo puede dar la
+   media de la familia, y la media no es ninguna montura concreta. Ver
+   `test_sin_sondeo_el_preentrenado_no_puede_distinguir_dos_monturas`.
+2. **Condicionando con puntos de sondeo tomados del arco de la noche** (`con_sondeo`). La
+   primera medición dio una mejora clara, p = 0,0078 con 8 noches, que es el mínimo posible.
+   Al repetir el experimento con otras monturas de la **misma** distribución, el efecto se
+   sostuvo en 4 de 6 sorteos y se dio la vuelta en 2. Era una semilla afortunada.
+3. **Con los puntos de sondeo repartidos por el cielo** (`simulador.pointings_de_sondeo`), que
+   es lo que se haría en campo. Peor todavía, por dos razones medidas: los pointings a altitud
+   alta corrompen la alineación de la sesión, y reajustar los términos clásicos con 6 puntos
+   está malísimamente condicionado (ver `sin_noches_reales`).
+
+Por eso `preparar` **no sonda por defecto**. La maquinaria se conserva encendible porque el
+resultado negativo es material de la Discusión y hay que poder reproducirlo, no porque se use.
+
+Mecanismo de transferencia, cuando se enciende
+----------------------------------------------
+Se transfiere **por residuo**, igual para los tres modelos: la predicción del modelo entrenado
+en simulación entra como desplazamiento fijo y el modelo ajustado con datos reales aprende lo
+que queda. Que el mecanismo sea el mismo para todos es deliberado: si cada modelo usara su
+propia forma de transferir (reinicio en caliente para la red, prior para Ridge, árboles
+añadidos para el boosting), la comparación entre modelos mezclaría dos efectos.
+
+Orden de las operaciones
+------------------------
+    cargar -> alinear_sesiones -> entrenar          (lo normal)
+    cargar -> preparar(datos, k) -> entrenar        (con sondeo, para reproducir el negativo)
+
+Si se sonda, va después de la alineación: mide el error que **queda** una vez quitados los
+términos de sesión; sobre el error crudo mediría los desfases del montaje, que ya se calibran.
 
 Sobre el boosting
 -----------------
@@ -68,6 +104,11 @@ TIPOS = ("clasico", "ridge", "boosting", "mlp")
 # por el cielo; aquí se toman repartidos a lo largo de la sesión, que es el equivalente.
 PUNTOS_ALINEACION = 3
 
+# Puntos de sondeo con los que se condiciona el modelo. Son medidas adicionales a las de la
+# alineación: en campo, apuntar a 6 objetos conocidos más y anotar el error que queda. Cada
+# punto aporta 4 números (az, alt, d_az, d_alt), así que 6 puntos son 24 entradas extra.
+PUNTOS_SONDEO = 6
+
 # Valores críticos de la prueba de Nemenyi (Demšar, 2006), para alfa = 0,05 y 0,10.
 _Q_NEMENYI = {
     0.05: {2: 1.960, 3: 2.343, 4: 2.569, 5: 2.728, 6: 2.850,
@@ -95,6 +136,12 @@ class Datos:
     inclinacion_ns: np.ndarray
     inclinacion_eo: np.ndarray
 
+    # (n, 4 * puntos). El error medido en los puntos de sondeo de la sesión de cada fila,
+    # repetido en todas sus filas. None mientras no se haya sondeado. Lo pone `con_sondeo`.
+    sondeo: np.ndarray | None = None
+    # (n,) booleano: qué filas **son** los puntos de sondeo. Lo pone `con_sondeo`.
+    es_sondeo: np.ndarray | None = None
+
     def __len__(self) -> int:
         return int(self.az.size)
 
@@ -106,7 +153,40 @@ class Datos:
         return list(vistas)
 
     def submuestra(self, mascara: np.ndarray) -> "Datos":
-        return Datos(**{k: v[mascara] for k, v in self.__dict__.items()})
+        return Datos(**{k: (None if v is None else v[mascara])
+                        for k, v in self.__dict__.items()})
+
+    @property
+    def puntos_sondeo(self) -> int:
+        return 0 if self.sondeo is None else self.sondeo.shape[1] // 4
+
+    def observaciones(self) -> "Datos":
+        """Quita las filas de sondeo. Son medidas de calibración, no observaciones.
+
+        Hay que quitarlas de todo: del entrenamiento y **también de la evaluación**. Medido el
+        07/11/2026: dejarlas dentro multiplicaba por tres el RMS de todas las condiciones,
+        porque los pointings de sondeo van a altitudes altas donde el factor `tan(h)` del
+        desnivel es casi diez veces el del arco de seguimiento. Seis filas de 486 dominaban la
+        medición entera.
+        """
+        if self.es_sondeo is None or not self.es_sondeo.any():
+            return self
+        return self.submuestra(~self.es_sondeo)
+
+    def valores_de_sondeo(self, sesion: str) -> tuple[np.ndarray, ...]:
+        """Los `(az, alt, d_az, d_alt)` de los puntos de sondeo de una sesión.
+
+        Salen del propio vector de características, así que siguen disponibles aunque las
+        filas de sondeo ya se hayan quitado con `observaciones`.
+        """
+        if self.sondeo is None:
+            raise ValueError("Estos datos no traen sondeo")
+        filas = _filas_de(self, sesion)
+        if filas.size == 0:
+            raise ValueError(f"No hay filas de la sesión {sesion!r}")
+        k = self.puntos_sondeo
+        v = self.sondeo[filas[0]]
+        return v[:k], v[k:2 * k], v[2 * k:3 * k], v[3 * k:]
 
     def de_sesiones(self, nombres: Iterable[str]) -> "Datos":
         quiero = set(map(str, nombres))
@@ -150,7 +230,81 @@ def cargar(ruta: str | Path, calidad_minima: float = 0.0) -> Datos:
     return Datos(**campos)
 
 
-# ------------------------------------------------------------------- alineación
+# ------------------------------------------------------- alineación y sondeo
+
+
+def _indices_repartidos(n: int, puntos: int, margen: float = 0.0) -> np.ndarray:
+    """`puntos` índices repartidos entre 0 y n-1, repitiendo si la sesión es más corta.
+
+    `margen` encoge el intervalo por los dos extremos. Sirve para que los puntos de sondeo no
+    caigan exactamente sobre los de la alineación: en campo son pointings distintos.
+    """
+    if n <= 0 or puntos <= 0:
+        return np.zeros(0, int)
+    bajo, alto = margen * (n - 1), (1.0 - margen) * (n - 1)
+    return np.clip(np.round(np.linspace(bajo, alto, puntos)), 0, n - 1).astype(int)
+
+
+def _filas_de(datos: Datos, nombre: str) -> np.ndarray:
+    return np.flatnonzero(np.array([str(s) == nombre for s in datos.sesion]))
+
+
+def con_sondeo(datos: Datos, puntos: int = PUNTOS_SONDEO,
+               desde: str = "primeras") -> Datos:
+    """Añade a cada fila el error medido en los puntos de sondeo de **su** sesión.
+
+    Es la pieza que hace transferible el preentrenamiento: sin ella el modelo no puede saber a
+    qué montura se enfrenta y solo predice la media de la familia (ver el encabezado del
+    módulo). Cada punto aporta su posición y su error, `(az, alt, d_az, d_alt)`, porque un
+    patrón de error solo significa algo junto con el lugar del cielo donde se midió.
+
+    Hay que llamarla sobre datos **ya alineados por sesión**: el sondeo mide lo que queda tras
+    la alineación, no los desfases del montaje.
+
+    `desde` dice de dónde salen los puntos:
+
+    - `"primeras"` (por defecto): las primeras filas de cada sesión. Es el protocolo real, en
+      el que el sondeo se hace **antes** de empezar a seguir, apuntando a objetos conocidos
+      repartidos por todo el cielo (`simulador.pointings_de_sondeo`).
+    - `"reparto"`: repartidas a lo largo de la sesión. Solo para datos que no traen un sondeo
+      propio. **Mide peor**: los puntos caen todos sobre el arco de la noche, unos 80° de
+      azimut, y sobre un arco corto los términos del error no se distinguen entre sí. Medido
+      el 07/11/2026; es lo que hundía el primer intento de condicionamiento.
+
+    Ojo con el orden de los experimentos: el sondeo usa filas de la propia sesión de prueba, y
+    eso es legítimo porque en campo esas medidas se toman antes de observar, igual que la
+    alineación. Lo que no sería legítimo es dárselo solo a una de las estrategias.
+    """
+    if puntos <= 0:
+        return replace(datos, sondeo=None, es_sondeo=None)
+    if desde not in ("primeras", "reparto"):
+        raise ValueError(f"`desde` debe ser 'primeras' o 'reparto', no {desde!r}")
+
+    sondeo = np.zeros((len(datos), 4 * puntos))
+    es_sondeo = np.zeros(len(datos), bool)
+    for nombre in datos.sesiones:
+        filas = _filas_de(datos, nombre)
+        if filas.size == 0:
+            continue
+        if desde == "primeras":
+            sel = filas[np.minimum(np.arange(puntos), filas.size - 1)]
+        else:
+            sel = filas[_indices_repartidos(filas.size, puntos, margen=0.1)]
+        sondeo[filas] = np.concatenate([datos.az[sel], datos.alt[sel],
+                                        datos.d_az[sel], datos.d_alt[sel]])
+        es_sondeo[np.unique(sel)] = True
+    return replace(datos, sondeo=sondeo, es_sondeo=es_sondeo)
+
+
+def preparar(datos: Datos, puntos_sondeo: int = 0,
+             desde: str = "primeras") -> tuple[Datos, dict[str, ParametrosError]]:
+    """Alinea, sonda y quita las filas de sondeo. Es la entrada normal al pipeline.
+
+    El último paso no es cosmético: ver `Datos.observaciones`. Los valores del sondeo siguen
+    disponibles como características y por `Datos.valores_de_sondeo`.
+    """
+    alineados, ajustes = alinear_sesiones(datos)
+    return con_sondeo(alineados, puntos_sondeo, desde).observaciones(), ajustes
 
 
 def alinear_sesiones(datos: Datos, puntos: int = PUNTOS_ALINEACION
@@ -170,10 +324,10 @@ def alinear_sesiones(datos: Datos, puntos: int = PUNTOS_ALINEACION
     ajustes: dict[str, ParametrosError] = {}
 
     for nombre in datos.sesiones:
-        indices = np.flatnonzero(np.array([str(s) == nombre for s in datos.sesion]))
+        indices = _filas_de(datos, nombre)
         if indices.size < 2:
             continue
-        cal = indices[np.linspace(0, indices.size - 1, min(puntos, indices.size)).astype(int)]
+        cal = indices[np.unique(_indices_repartidos(indices.size, puntos))]
         aj = ajustar(datos.az[cal], datos.alt[cal], datos.d_az[cal], datos.d_alt[cal],
                      TERMINOS_SESION)
         pred_az, pred_alt = error_lineal(datos.az[indices], datos.alt[indices], aj.parametros)
@@ -194,10 +348,13 @@ def caracteristicas(datos: Datos) -> np.ndarray:
     de excentricidad tiene que salir de los datos, no de pistas puestas a mano. Tampoco
     incluye la fase lunar, que no influye en el apuntado y solo invitaría a correlaciones
     espurias con la noche.
+
+    Si los datos vienen sondeados (`con_sondeo`), añade al final las entradas del sondeo. Son
+    las que identifican la montura y hacen transferible el preentrenamiento.
     """
     a = np.radians(datos.az)
     h = np.radians(np.clip(datos.alt, -ALT_MAX_MODELO, ALT_MAX_MODELO))
-    return np.column_stack([
+    base = np.column_stack([
         datos.az, datos.alt,
         np.sin(a), np.cos(a), np.sin(2 * a), np.cos(2 * a),
         np.sin(h), np.cos(h), np.tan(h),
@@ -205,6 +362,9 @@ def caracteristicas(datos: Datos) -> np.ndarray:
         datos.temperatura - 25.0,
         datos.inclinacion_ns, datos.inclinacion_eo,
     ])
+    if datos.sondeo is None:
+        return base
+    return np.hstack([base, datos.sondeo])
 
 
 def _estimador(tipo: str, semilla: int = 0):
@@ -247,6 +407,7 @@ class Corrector:
     modelo: _DosSalidas | None = None
     offset: Callable[[np.ndarray], tuple[np.ndarray, np.ndarray]] | None = None
     n_sesiones: int = 0
+    ancho: int = 0  # columnas de entrada con las que se entrenó, para detectar desajustes
 
     def predecir(self, datos: Datos) -> tuple[np.ndarray, np.ndarray]:
         d_az, d_alt = error_lineal(datos.az, datos.alt, self.persistentes,
@@ -291,19 +452,25 @@ def entrenar(datos: Datos, tipo: str, *, previo: Corrector | None = None,
     if tipo not in TIPOS:
         raise ValueError(f"Tipo desconocido: {tipo}. Use uno de {TIPOS}")
 
+    X = caracteristicas(datos)
+    if previo is not None and previo.ancho and previo.ancho != X.shape[1]:
+        raise ValueError(
+            f"El corrector previo se entrenó con {previo.ancho} entradas y estos datos tienen "
+            f"{X.shape[1]}. Los dos tienen que venir del mismo numero de puntos de sondeo: "
+            f"use `con_sondeo` con el mismo valor en los sinteticos y en los reales.")
+
     offset = previo.predecir_ml if previo is not None else None
 
     # 1. Términos persistentes del modelo clásico, con los datos reales disponibles.
     aj = ajustar(datos.az, datos.alt, datos.d_az, datos.d_alt, TERMINOS_PERSISTENTES,
                  sentido_az=datos.sentido_az, sentido_alt=datos.sentido_alt,
                  temperatura=datos.temperatura)
-    base = Corrector(tipo, aj.parametros, None, offset, len(datos.sesiones))
+    base = Corrector(tipo, aj.parametros, None, offset, len(datos.sesiones), X.shape[1])
     if tipo == "clasico":
         return base
 
     # 2. La IA aprende lo que queda después de lo clásico y del desplazamiento.
     resto = base.residuo(datos)
-    X = caracteristicas(datos)
     modelo = _DosSalidas(tipo, semilla).fit(X, resto.d_az, resto.d_alt)
     return replace(base, modelo=modelo)
 
@@ -348,6 +515,49 @@ def dejando_una_noche_fuera(datos: Datos, tipo: str, *, previo: Corrector | None
     return Resultado(tipo, estrategia, por_sesion, len(nombres) - 1)
 
 
+def sin_noches_reales(datos: Datos, previo: Corrector, *,
+                      clasico_del_sondeo: bool = False) -> Resultado:
+    """Evalúa un corrector preentrenado en simulación sobre cada noche, sin ajuste fino.
+
+    Es la condición que solo existe gracias al condicionamiento por sondeo: el modelo no ha
+    visto nunca esta montura y lo único que sabe de ella son sus puntos de sondeo. Devuelve un
+    `Resultado` con el mismo formato que `dejando_una_noche_fuera`, para poder compararlos
+    noche a noche con `wilcoxon_pareado`.
+
+    Los términos persistentes del modelo clásico se heredan del corrector preentrenado, o sea
+    de la familia sintética. Eso es volver a usar la media de la familia para la parte
+    clásica, y es una debilidad declarada de esta condición.
+
+    `clasico_del_sondeo=True` prueba la alternativa: reajustarlos con los puntos de sondeo de
+    esa noche. **No funciona, y queda para poder reproducir el hallazgo.** Medido el
+    07/11/2026 con 6 puntos repartidos por el cielo: el RMS sube a 105′ de mediana sobre un
+    error crudo de 80′, peor que no corregir nada. La razón es el condicionamiento, no el
+    rango: con 6 puntos, `sec(h)` (colimación) y `tan(h)` (no perpendicularidad) son casi
+    colineales, `lstsq` devuelve coeficientes enormes que se cancelan entre sí en los propios
+    puntos, y al extrapolarlos al arco de seguimiento el error explota. Que haya 12 ecuaciones
+    para 7 incógnitas dice que el sistema tiene rango, no que esté bien condicionado.
+    """
+    if datos.puntos_sondeo == 0:
+        raise ValueError(
+            "Sin sondeo esta condicion no tiene sentido: el modelo no puede saber a que "
+            "montura se enfrenta. Use `con_sondeo` antes.")
+
+    por_sesion = {}
+    for s in datos.sesiones:
+        noche = datos.de_sesiones([s]).observaciones()
+        corrector = previo
+        if clasico_del_sondeo:
+            p_az, p_alt, p_daz, p_dalt = datos.valores_de_sondeo(s)
+            # Desde pointings estáticos no se puede medir la holgura (hace falta invertir el
+            # sentido de giro), así que esas columnas quedan en cero y `lstsq` las anula.
+            aj = ajustar(p_az, p_alt, p_daz, p_dalt, TERMINOS_PERSISTENTES,
+                         sentido_az=np.zeros_like(p_az), sentido_alt=np.zeros_like(p_az),
+                         temperatura=np.full_like(p_az, float(np.mean(noche.temperatura))))
+            corrector = replace(previo, persistentes=aj.parametros)
+        por_sesion[s] = corrector.residuo(noche).rms
+    return Resultado(previo.tipo, "simulacion", por_sesion, 0)
+
+
 def comparar_modelos(datos: Datos, tipos: Sequence[str] = TIPOS, *,
                      previo_por_tipo: dict[str, Corrector] | None = None,
                      semilla: int = 0) -> dict[str, Resultado]:
@@ -377,6 +587,14 @@ def curva_de_aprendizaje(reales: Datos, tipo: str, *, sinteticos: Datos | None =
 
     Con `sinteticos` entrega además la curva de la estrategia B (preentrenar y ajustar). La
     diferencia entre las dos curvas es el aporte del artículo: cuántas noches se ahorran.
+
+    `reales` tiene que venir de `preparar` (alineado y sondeado). Los `sinteticos` se preparan
+    aquí dentro, con el mismo número de puntos de sondeo que traigan los reales.
+
+    `n_noches` admite **0** cuando hay `sinteticos`: es el caso que solo existe gracias al
+    condicionamiento por sondeo, apuntar con un modelo entrenado únicamente en simulación más
+    los puntos de sondeo de la montura. La estrategia A no tiene ese punto: sin noches reales
+    no hay nada con que entrenar.
     """
     nombres = reales.sesiones
     if len(nombres) < 3:
@@ -386,12 +604,18 @@ def curva_de_aprendizaje(reales: Datos, tipo: str, *, sinteticos: Datos | None =
     previo = None
     if sinteticos is not None and tipo != "clasico":
         alineados, _ = alinear_sesiones(sinteticos)
-        previo = entrenar(alineados, tipo, semilla=semilla)
+        previo = entrenar(con_sondeo(alineados, reales.puntos_sondeo), tipo, semilla=semilla)
 
     rng = np.random.default_rng(semilla)
     puntos: list[PuntoCurva] = []
 
     for n in n_noches:
+        if n == 0:
+            # Sin noches reales no hay ajuste fino: se evalúa el preentrenado tal cual, sobre
+            # todas las noches. No hay contrapartida en la estrategia A.
+            if previo is not None:
+                puntos.append(PuntoCurva(0, "simulacion", [previo.residuo(reales).rms]))
+            continue
         if n >= len(nombres):
             continue
         acumulado: dict[str, list[float]] = {"real": [], "simulacion": []}

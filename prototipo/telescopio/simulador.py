@@ -387,14 +387,64 @@ def trayectoria_sintetica(inicio: datetime, n: int, *, paso_s: float = 1.0,
     return puntos
 
 
+def pointings_de_sondeo(inicio: datetime, n: int, *, rng: np.random.Generator,
+                        paso_s: float = 45.0, alt_min: float = 20.0,
+                        alt_max: float = 65.0) -> list[PuntoTrayectoria]:
+    """Los pointings del sondeo: `n` objetos conocidos repartidos por **todo** el cielo.
+
+    No es un trozo de la trayectoria de la noche, y la diferencia resultó decisiva. Medido el
+    07/11/2026: con los puntos de sondeo tomados a lo largo del arco de seguimiento (unos 80°
+    de azimut) el sondeo no identifica la montura, porque sobre un arco corto los términos del
+    error son casi indistinguibles entre sí. Es el mismo fenómeno que
+    `test_un_arco_corto_no_deja_ver_la_no_linealidad`.
+
+    Reparte el azimut en todo el círculo y la altitud en el rango utilizable, con algo de
+    azar para que dos sondeos no caigan siempre en los mismos sitios. En campo es lo que uno
+    hace sin pensarlo: elegir estrellas de alineación separadas, no vecinas.
+
+    El tope de altitud es 65° a propósito, no 85°. Cerca del cenit una montura altazimutal es
+    patológica: el factor `tan(h)` del desnivel se dispara (tan 80° = 5,7 frente a tan 45° =
+    1) y un pointing de sondeo ahí aporta un error enorme y mal condicionado en vez de
+    información. Es el punto ciego del cenit, conocido en monturas altazimutales.
+
+    Al paso de 45 s por pointing, 6 puntos son unos 4 minutos de sesión.
+    """
+    if inicio.tzinfo is None:
+        inicio = inicio.replace(tzinfo=timezone.utc)
+    if n <= 0:
+        return []
+
+    # Reparto en azimut con un desfase al azar, para cubrir el círculo sin repetir posiciones.
+    desfase = float(rng.uniform(0, 360))
+    azimuts = (desfase + np.linspace(0.0, 360.0, n, endpoint=False)) % 360.0
+    # Altitudes alternadas alto/bajo: cubrir el rango importa tanto como cubrir el azimut,
+    # porque la flexión y la no perpendicularidad solo se separan con altitudes distintas.
+    altitudes = np.linspace(alt_min, alt_max, n)
+    altitudes = altitudes[np.argsort(np.abs(np.arange(n) - (n - 1) / 2.0))]
+    altitudes = np.clip(altitudes + rng.normal(0, 2.0, n), alt_min, alt_max)
+
+    puntos = []
+    for i, (az, alt) in enumerate(zip(azimuts, altitudes)):
+        t = inicio + timedelta(seconds=i * paso_s)
+        puntos.append(PuntoTrayectoria(t, float(az), float(alt), fase_lunar_aproximada(t)))
+    return puntos
+
+
 def generar_dataset(ruta_csv: str | Path, *, n_monturas: int = 40, noches_por_montura: int = 3,
                     minutos_por_noche: float = 60.0, paso_s: float = 1.0, semilla: int = 0,
                     efemerides=None, inicio: datetime | None = None,
-                    ruta_parametros: str | Path | None = None) -> dict:
+                    ruta_parametros: str | Path | None = None,
+                    puntos_sondeo: int = 0) -> dict:
     """Genera el conjunto sintético completo y lo escribe en CSV.
 
     Con `efemerides=None` usa la trayectoria aproximada, que sirve para probar el pipeline
     pero **no** para los datos del artículo.
+
+    Cada noche empieza por `puntos_sondeo` pointings repartidos por el cielo y sigue con el
+    arco de seguimiento, que es el protocolo de sesión: sondear antes de observar. Así
+    `aprendizaje.con_sondeo(..., desde="primeras")` encuentra el sondeo donde lo espera. Con
+    `puntos_sondeo=0` se genera solo el arco, y entonces el condicionamiento no tiene de dónde
+    salir.
 
     Devuelve un resumen con el recuento de filas y el error RMS, para dejar constancia.
     """
@@ -422,7 +472,9 @@ def generar_dataset(ruta_csv: str | Path, *, n_monturas: int = 40, noches_por_mo
                     alt_inicial=float(rng.uniform(15, 45)))
             if not tray:
                 continue
-            filas = generar_noche(montura, muestrear_sesion(rng), tray,
+            # El sondeo va delante del arco: es el orden del protocolo de sesión.
+            sondeo = pointings_de_sondeo(arranque, puntos_sondeo, rng=rng)
+            filas = generar_noche(montura, muestrear_sesion(rng), sondeo + list(tray),
                                   nombre_sesion=f"{montura.identificador}-n{j}", rng=rng)
             total += guardar_seguimiento(ruta_csv, filas)
             errores.extend(f.error_cielo_arcmin for f in filas)
@@ -457,6 +509,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     p.add_argument("--minutos", type=float, default=60.0)
     p.add_argument("--paso", type=float, default=1.0, help="segundos entre filas")
     p.add_argument("--semilla", type=int, default=0)
+    p.add_argument("--sondeo", type=int, default=0,
+                   help="pointings de sondeo al empezar cada noche (0 = sin sondeo)")
     p.add_argument("--skyfield", action="store_true",
                    help="usar efemérides reales (descarga de421.bsp la primera vez)")
     args = p.parse_args(argv)
@@ -471,7 +525,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     resumen = generar_dataset(
         args.salida, n_monturas=args.monturas, noches_por_montura=args.noches,
         minutos_por_noche=args.minutos, paso_s=args.paso, semilla=args.semilla,
-        efemerides=efemerides, ruta_parametros=args.parametros)
+        efemerides=efemerides, ruta_parametros=args.parametros,
+        puntos_sondeo=args.sondeo)
 
     # Sin caracteres fuera de ASCII: la consola de Windows usa cp1252 por defecto y
     # revienta con el simbolo de minuto de arco.

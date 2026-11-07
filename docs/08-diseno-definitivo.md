@@ -11,9 +11,22 @@ el **57 % de la nota** exige datos medidos reales.
 
 ## 1. El aporte, en una frase
 
-> **Pre-entrenar en simulación con aleatorización de dominio reduce la cantidad de noches de
+> ⚠️ **Revisado el 07/11/2026, y hay que hablarlo con el Ing. Corrales.** El aporte de abajo
+> era el preentrenamiento, y **no sobrevivió a su propia comprobación** en simulación: §4
+> tiene las tres variantes que se probaron y por qué se cae cada una. Hasta que se decida con
+> el tutor, el aporte medido es el primero de estos dos:
+>
+> 1. **Un corrector aprendido vence al modelo clásico de apuntado en una montura altacimutal
+>    de bajo costo**, con validación dejando una noche fuera y separando el error de sesión
+>    del persistente (§3). Sostenido en 6 de 6 sorteos independientes; mediana 3,93′ → 3,50′.
+> 2. **Por qué transferir desde simulación no funciona aquí**, con diagnóstico: un modelo que
+>    no observa a qué montura se enfrenta solo puede predecir la media de la familia.
+>
+> El aporte original, tachado, se conserva para que quede la trazabilidad de la decisión:
+
+> ~~**Pre-entrenar en simulación con aleatorización de dominio reduce la cantidad de noches de
 > observación reales que hace falta para que un modelo de aprendizaje automático corrija el
-> error de apuntado de una montura altacimutal de bajo costo.**
+> error de apuntado de una montura altacimutal de bajo costo.**~~
 
 ### Por qué este aporte y no otro
 
@@ -86,10 +99,25 @@ debe gastar páginas** en lo de la izquierda:
 
 ## 2. Pregunta, hipótesis y objetivos
 
-**Pregunta.** ¿En qué medida el pre-entrenamiento en simulación con aleatorización de dominio
-reduce el número de noches de observación reales necesarias para que un modelo de aprendizaje
-automático corrija el error de apuntado y seguimiento de una montura altacimutal de bajo
-costo por debajo del campo visual del instrumento?
+> ⚠️ **Esta sección está pendiente de rehacerse con el tutor** (07/11/2026). La pregunta, H3,
+> el objetivo general y el objetivo específico 4 están construidos sobre el preentrenamiento,
+> que §4 descarta con mediciones. Lo demás (H1, H2, H4, objetivos 1, 2, 3 y 5) se mantiene
+> intacto. **Propuesta de pregunta nueva**, para llevarle al Ing. Corrales:
+>
+> *¿En qué medida un modelo de aprendizaje automático entrenado sobre el residuo del modelo
+> clásico de apuntado reduce el error de una montura altacimutal de bajo costo, y cuántas
+> noches de observación hacen falta para lograrlo?*
+>
+> Fíjate en que la segunda mitad **conserva la pregunta de las noches**, que es interesante y
+> sí se puede responder: lo que se cae es compararla contra el preentrenamiento, no medir la
+> curva. El objetivo 4 pasaría a ser "Cuantificar la curva de error frente al número de noches
+> de entrenamiento con datos reales", y E4 se queda sin la rama de simulación.
+
+**Pregunta** (vigente, pendiente de revisión). ¿En qué medida el pre-entrenamiento en
+simulación con aleatorización de dominio reduce el número de noches de observación reales
+necesarias para que un modelo de aprendizaje automático corrija el error de apuntado y
+seguimiento de una montura altacimutal de bajo costo por debajo del campo visual del
+instrumento?
 
 **Hipótesis.**
 
@@ -97,7 +125,7 @@ costo por debajo del campo visual del instrumento?
 |---|---|---|
 | **H1** | El error de apuntado de la montura impresa es sistemático: un modelo de apuntado clásico explica una parte y queda un residuo no lineal apreciable | E1 |
 | **H2** | Los modelos no lineales (LightGBM, MLP) reducen el error residual más que la regresión Ridge | E3 |
-| **H3** | El pre-entrenamiento en simulación alcanza un error dado con **menos noches reales** que el entrenamiento solo con datos reales | **E4 (el aporte)** |
+| ~~**H3**~~ | ~~El pre-entrenamiento en simulación alcanza un error dado con **menos noches reales** que el entrenamiento solo con datos reales~~ · **descartada el 07/11/2026**: no se sostiene en simulación (§4) | — |
 | **H4** | Un detector aprendido mide el centro lunar con menor error y menos fallos que la transformada de Hough, sobre todo en fases delgadas | E2 |
 
 **Objetivo general.** Determinar en qué medida el pre-entrenamiento en simulación con
@@ -307,73 +335,103 @@ es lo que hace que las semanas 1 a 6 sean productivas sin hardware.
 
 Sobre `astro.py`, `montura.py` y `correccion.py`, que ya existen, esto son unas 200 líneas.
 
-### Cómo se transfiere lo aprendido: primer intento fallido y reparación
+### El preentrenamiento en simulación no funciona. Lo que sí funciona
 
-Medido el 06/11/2026 al implementar `aprendizaje.py`. **Hay que decidir esto antes de las
-noches reales**, porque cambia el método.
+Medido el 06 y 07/11/2026 al implementar `aprendizaje.py`, y reproducible con
+`prototipo/analisis/e5_transferencia.py`. **Esto cambia el aporte del artículo**, así que hay
+que hablarlo con el Ing. Corrales antes de fijar el título.
 
-**Lo que se probó primero: transferencia por residuo.** El modelo entrenado en simulación
+#### Lo que sí se sostiene, y es el resultado del artículo
+
+| | Mediana | Mínimo | Máximo |
+|---|---|---|---|
+| Modelo clásico | 3,93′ | 3,10′ | 4,34′ |
+| **Corrector aprendido** (boosting sobre el residuo) | **3,50′** | 2,56′ | 3,96′ |
+
+**El corrector aprendido vence al modelo clásico en 6 de 6 sorteos independientes**, 4 de
+ellos con p < 0,05 (Wilcoxon pareado, 8 noches por sorteo). Una mejora de ~11 %, modesta pero
+consistente. Y antes de eso, la alineación de sesión baja el error de ~72′ a ~4′: los términos
+de sesión son el 96 % del problema y se **calibran**, no se aprenden (§3).
+
+Reproducir:
+
+```bash
+python -P analisis/e5_transferencia.py --sorteos 6 --sondeo 0 --monturas 2
+```
+
+#### Lo que no se sostiene: tres intentos de preentrenar
+
+**Intento 1 · transferencia por residuo, sin condicionar.** El modelo entrenado en simulación
 predice, su predicción se usa como desplazamiento fijo, y el modelo ajustado con datos reales
-aprende lo que queda. Se eligió así para que el mecanismo fuera **el mismo para los tres
-modelos** y la comparación entre ellos no mezclara dos efectos.
+aprende lo que queda. Empeoró en todos los casos.
 
-**Resultado: empeora, en todos los casos.** Con 20 monturas sintéticas y 8 noches reales
-simuladas:
+El diagnóstico no es de hiperparámetros, es una **identidad**:
 
-| Noches reales | Solo real (′) | Preentrenado + ajuste (′) |
-|---|---|---|
-| 1 | 4,29 | 5,24 |
-| 3 | 3,72 | 4,91 |
-| 5 | 3,08 | 4,79 |
-| 7 | 2,74 | 4,42 |
+> Dos monturas distintas apuntadas a las mismas posiciones del cielo producen exactamente las
+> **mismas** entradas, porque las entradas solo dicen dónde está el telescopio y en qué
+> condiciones. Así que el modelo predice lo mismo para las dos. Solo puede dar la media de la
+> familia, y la media de la familia no es ninguna montura concreta.
 
-**Diagnóstico.** La correlación entre lo que predice el modelo preentrenado y lo que habría
-que predecir es **−0,003 en azimut y +0,031 en altitud**: cero. Y mientras tanto inyecta 2,3′
-de desplazamiento sobre un objetivo de 2 a 3,7′. O sea: ruido puro.
+Esto vale para los tres modelos por igual, porque no habla del modelo sino de sus entradas.
+Queda fijado en `test_sin_sondeo_el_preentrenado_no_puede_distinguir_dos_monturas`.
 
-La razón es estructural, no de ajuste de hiperparámetros:
+**Intento 2 · condicionar con puntos de sondeo del arco de la noche.** Darle al modelo, como
+entradas extra, el error medido en 6 puntos de la montura que tiene delante. La primera
+medición fue espectacular: 2,92′ con **cero noches reales**, empatando con un modelo entrenado
+con 7 noches, y p = 0,0078, que es el valor más bajo posible con 8 noches.
 
-> Un modelo que **no puede observar a qué montura se enfrenta** solo puede predecir la media
-> de la familia. Y la media de la familia no es ninguna montura concreta. Conocer la
-> distribución no dice nada sobre el ejemplar que te tocó.
+Y era falso. Al repetir el **mismo** experimento con otras monturas sorteadas de la **misma**
+distribución, el efecto se sostuvo en 4 de 6 sorteos y se dio la vuelta en 2 (perdiendo de
+forma significativa). No era un resultado: era una semilla afortunada.
 
-Esto invalida el preentrenamiento **incondicional**, no la idea de preentrenar.
+> Esta es la lección metodológica más importante de la semana, y va en la Discusión. Un
+> experimento con un solo sorteo de la familia sintética **no mide nada**, por bueno que sea
+> el valor de p. El p responde "¿es consistente entre las 8 noches de esta montura?", no "¿se
+> repetiría con otra montura?". Hacen falta las dos preguntas.
 
-**La reparación: condicionar con un sondeo.** La entrada del modelo incluye el error medido en
-un puñado de puntos de sondeo de la montura que tiene delante. Así el preentrenamiento sobre
-miles de monturas sintéticas enseña algo que sí se transfiere: *"dado este patrón de error en
-estos puntos, el error en el resto del cielo se ve así"*. Es calibración amortizada.
+**Intento 3 · con los puntos de sondeo repartidos por todo el cielo**, que es lo que haría
+cualquiera en campo: apuntar a 6 objetos conocidos separados, no vecinos. Peor todavía, y por
+dos razones que se midieron:
 
-**Prueba de concepto, con 6 puntos de sondeo:**
+- **Los pointings de sondeo a altitud alta corrompen la alineación.** La alineación ajusta solo
+  4 términos de sesión; un punto a 65° de altitud arrastra un error persistente enorme (el
+  factor `tan(h)` del desnivel vale 2,1 a 65° frente a 0,47 a 25°) que el ajuste absorbe como
+  si fuera de sesión, y entonces la corrección sale mal para toda la noche. Es el **punto
+  ciego del cenit**, conocido en monturas altazimutales: no se alinea sobre una estrella alta.
+- **Reajustar los términos clásicos con 6 puntos está malísimamente condicionado.** Razoné que
+  6 puntos dan 12 ecuaciones para 7 términos, luego el sistema está determinado. Era falso:
+  tiene rango completo, pero `sec(h)` (colimación) y `tan(h)` (no perpendicularidad) son casi
+  colineales en 6 puntos. `lstsq` devuelve coeficientes enormes que se cancelan entre sí en
+  esos puntos y explotan al extrapolar al arco: el RMS subió a más de 1 000′. **Tener rango no
+  es estar bien condicionado.**
 
-| | Sin condicionamiento | Con sondeo |
-|---|---|---|
-| Correlación en azimut | −0,003 | **+0,66** |
-| Correlación en altitud | +0,031 | **+0,44** |
-| RMS en azimut | 3,70′ | **2,86′** |
+#### Qué queda en el código
 
-Y ese 2,86′ se consigue con **cero noches reales de entrenamiento**: solo los 6 puntos de
-sondeo. (En altitud todavía no mejora el RMS pese a la correlación: falta ajuste.)
+El sondeo queda **implementado y apagado por defecto** (`preparar(datos, puntos_sondeo=0)`),
+con las mediciones escritas en los docstrings. Se conserva porque el resultado negativo es
+material de la Discusión y hay que poder reproducirlo, no porque se use.
 
-**Qué cambia para el artículo, si se adopta.** La pregunta se afila y mejora: de *"¿cuántas
-noches hacen falta?"* a *"¿cuántas medidas hacen falta?"*. Si bastan unos minutos de sondeo al
-empezar la sesión en lugar de noches enteras de datos, el método pasa a ser **utilizable en
-campo**, que es justo el argumento de §3 sobre la montura que se vuelve a nivelar cada
-atardecer. También encaja mejor en 15 semanas, porque reduce la dependencia del número de
-noches.
+#### Qué significa esto para el artículo
 
-**Qué cuesta.** Hay que rehacer el mecanismo de transferencia de `aprendizaje.py` y decidir
-cómo se obtienen los puntos de sondeo en el protocolo real (apuntando a posiciones conocidas
-al empezar la noche, que es lo mismo que la alineación pero con más puntos).
+El aporte **ya no puede ser** "preentrenar en simulación reduce las noches necesarias". Esa
+afirmación no sobrevive a su propia comprobación. Quedan dos aportes, y los dos son
+publicables:
 
-> El resultado negativo **no se tira**: queda fijado como prueba automática
-> (`test_la_transferencia_por_residuo_no_aporta_sobre_una_familia_centrada`) y es material
-> para la Discusión. Que el preentrenamiento incondicional no sirva para este problema es un
-> hallazgo con valor propio, y además refuerza el ítem 25 de la rúbrica.
+1. **Un corrector aprendido para monturas altazimutales de bajo costo, que vence al modelo
+   clásico de apuntado**, con validación dejando una noche fuera y la separación entre error
+   de sesión y error persistente (§3) como contribución metodológica.
+2. **El resultado negativo sobre la transferencia desde simulación**, con su diagnóstico: por
+   qué un modelo no condicionado solo puede predecir la media de la familia, y por qué el
+   condicionamiento por sondeo tampoco lo arregla. Esto es contenido real para la Discusión y
+   refuerza el ítem 25 de la rúbrica.
 
-**Lo importante del calendario:** esto se descubrió en la semana 1, con datos simulados, y no
-en la semana 12 con los datos reales ya tomados. Es exactamente para lo que sirve construir el
-simulador primero.
+Para qué sigue sirviendo el simulador, entonces: para **diseñar el método y descartar ideas
+antes de gastar noches de telescopio**. Que estas tres variantes se cayeran en la semana 1 con
+datos simulados, y no en la semana 12 con las noches ya gastadas, es exactamente para lo que
+se construyó primero.
+
+> **Pendiente con el tutor.** El título recomendado en §8 habla de "menos noches de
+> observación" y ya no corresponde. Ver §8, que queda marcada para revisión.
 
 ---
 
@@ -415,7 +473,7 @@ paso es residuo persistente, y es lo único comparable entre noches.
 | **E1** | Caracterización del error de la montura | Media, DE, **RMS**, mediana, IC 95 % | Bootstrap agrupado **por noche**. Desglose por zona del cielo, fase lunar y temperatura |
 | **E2** | Hough frente a detector aprendido | Error del centro (px y ′), % de no detección, fps en la Pi | Wilcoxon pareado, agrupado por noche, estratificado por fase |
 | **E3** | Ridge / LightGBM / MLP con datos reales | Error residual RMS (′) | **Friedman + Nemenyi**, k = 3, dejando una noche fuera |
-| **E4** | **Noches reales frente a simulación + ajuste fino** | Curva de error RMS contra N noches de entrenamiento | **Wilcoxon pareado** por noche de prueba, en cada N |
+| **E4** | Curva de error frente al número de noches reales de entrenamiento (la rama de simulación queda descartada, §4) | Curva de error RMS contra N noches | **Wilcoxon pareado** por noche de prueba, entre N consecutivos |
 | **E5** | Sistema completo en lazo cerrado | % del tiempo con la Luna centrada; error RMS de seguimiento | Wilcoxon pareado entre los tres modos |
 
 E5 compara tres modos: solo efemérides · efemérides + corrector · efemérides + corrector +
@@ -435,6 +493,45 @@ Esto no es una opinión, sale de la prueba estadística:
 - **E3 funciona con 6 noches.** Con k = 3 modelos y n = 6, la diferencia crítica de Nemenyi es
   ≈ 1,35 sobre un rango de rangos de 1 a 3: se separa si un modelo es consistentemente mejor.
 - **Objetivo: 8 noches. Piso: 6.** Por debajo de 6 hay que replantear E4.
+
+#### Y 6 noches, medido, no alcanzan
+
+Lo anterior es aritmética: dice qué valor de p es *posible*. Esto es una medición de qué pasa
+en la práctica, con 6 sorteos independientes en simulación (`analisis/e5_transferencia.py`):
+
+| Noches | Clásico (mediana) | Aprendido (mediana) | Gana el aprendido | Con p < 0,05 |
+|---|---|---|---|---|
+| **6** | 3,78′ | 3,56′ | 5 de 6 sorteos | **0 de 6** |
+| **8** | 3,93′ | 3,50′ | **6 de 6 sorteos** | **4 de 6** |
+
+Con 6 noches el efecto **está, en la dirección correcta, y no se puede demostrar**: ni una vez
+de seis cruzó el umbral. Con 8 cruza cuatro veces de seis.
+
+> Esto convierte las 8 noches de un objetivo deseable en un **requisito**. Seis noches no son
+> "casi ocho": son el número con el que se ve el efecto y no se puede publicar. Si el clima
+> deja seis noches, el artículo informa la dirección y declara que no alcanzó significancia,
+> que es un resultado honesto pero mucho más débil. Vale la pena planificar diez para que
+> queden ocho.
+
+### Un valor de p no basta: hace falta repetir el sorteo
+
+Regla que sale de habernos equivocado, el 07/11/2026, y que vale para **todo** experimento que
+se diseñe en simulación antes de medir en campo (§4, intento 2):
+
+> Una prueba de Wilcoxon sobre las 8 noches de una montura responde *"¿es consistente entre
+> estas noches?"*. **No** responde *"¿se repetiría con otra montura?"*. Son dos preguntas
+> distintas, y la segunda solo se puede contestar repitiendo el experimento completo con otras
+> monturas sorteadas de la misma distribución.
+
+Nos salió p = 0,0078 —el valor más bajo posible con 8 noches— en un efecto que al repetirlo
+con otras monturas se daba la vuelta la mitad de las veces. El p estaba bien calculado; la
+pregunta estaba mal planteada.
+
+Por eso `prototipo/analisis/e5_transferencia.py` corre siempre varios sorteos independientes e
+imprime en cuántos se sostiene cada afirmación. **En el experimento de campo esto no se puede
+hacer** —hay una sola montura, la de Nashla— y de ahí se sigue algo que va en Limitaciones:
+los resultados valen para *esta* montura, y la generalización a otras monturas de bajo costo
+es una conjetura, no un resultado.
 
 Y esto explica por qué se descarta cruzar los dos ejes: con 9 condiciones y 8 noches, la
 diferencia crítica de Nemenyi sube a ≈ 4,3 sobre un rango de 1 a 9, y **no se separaría casi
@@ -476,10 +573,25 @@ diferencia marca **P** en el ítem 3. Además, "sistema inteligente" no dice qu�
 > simulación para corregir el error de apuntado de una montura altacimutal de bajo costo con
 > aprendizaje automático") estaba mal contada. **Tiene 19 palabras y se pasa del límite.**
 
-### Recomendado (17 palabras)
+> ⚠️ **El título recomendado ya no corresponde (07/11/2026).** Habla de preentrenamiento y de
+> "menos noches", y §4 descarta las dos cosas con mediciones. Queda tachado y se propone otro.
 
-> **Preentrenamiento en simulación para corregir el apuntado de monturas de bajo costo con
-> menos noches de observación**
+### ~~Recomendado hasta el 07/11/2026 (17 palabras)~~
+
+> ~~**Preentrenamiento en simulación para corregir el apuntado de monturas de bajo costo con
+> menos noches de observación**~~
+
+### Propuesta nueva (16 palabras), para hablar con el tutor
+
+> **Corrección del apuntado de una montura altacimutal de bajo costo con aprendizaje
+> automático sobre el residuo**
+
+Dice exactamente lo que el artículo demuestra: una montura concreta, de bajo costo, y
+aprendizaje automático aplicado **al residuo** del modelo clásico, que es la decisión de diseño
+que lo hace funcionar (§3). No promete noches ahorradas ni transferencia desde simulación.
+
+En inglés (12 palabras): *Machine-learning residual correction of pointing error in a low-cost
+altazimuth telescope mount*.
 
 En inglés (13 palabras):
 
@@ -652,8 +764,14 @@ La tercera columna es la que hace que esto quepa en 15 semanas y lo otro no.
 
 ## 13. Pendientes inmediatos
 
-1. **Confirmar con el tutor** el recorte, el título nuevo y la salida del estudio de
-   usabilidad. Es lo primero, porque cambia objetivos aprobados.
+1. **Confirmar con el tutor**, y ahora hay más que confirmar (07/11/2026). Es lo primero,
+   porque cambia objetivos aprobados:
+   - el recorte y la salida del estudio de usabilidad;
+   - **el aporte, la pregunta, H3, el objetivo general, el objetivo 4 y el título**, que
+     estaban construidos sobre el preentrenamiento y no sobrevivieron a su comprobación (§4).
+     Cada uno queda tachado en su sección con una propuesta de reemplazo al lado.
+   - Lo que **no** cambia: la montura, el circuito, las noches de observación, H1, H2, H4 y
+     los objetivos 1, 2, 3 y 5. El trabajo de campo es el mismo.
 2. **Decidir la cámara.** La rúbrica no da puntos por la cámara. Una Raspberry Pi HQ Camera
    con lente de ~28 mm da la Luna del mismo tamaño en píxeles (≈ 160 px) por 50–80 USD, se
    conecta directo a la Pi y elimina la capturadora HDMI y el SDK de Sony, que son dos
@@ -661,3 +779,5 @@ La tercera columna es la que hace que esto quepa en 15 semanas y lo otro no.
 3. **Comprar lo que bloquea la impresión** (poleas GT2, rodamiento giratorio) esta semana.
 4. **Leer las dos referencias obligatorias** de §11.
 5. Fusionar el PR #1 para que `MEMORIA.md` deje de vivir en una rama aparte.
+6. **Decidir cuántas noches comprometer.** Ver §6: el objetivo sigue siendo 8 y el piso 6, y
+   hay una medición nueva sobre cuánto depende el resultado de ese número.

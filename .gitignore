@@ -8,3 +8,6 @@ venv/
 # Datos generados en las pruebas (se versionan a mano cuando sean definitivos)
 prototipo/datos/*.csv
 prototipo/datos/*.joblib
+# Y los de las subcarpetas de cada experimento (analisis/ los regenera solo)
+prototipo/datos/**/*.csv
+prototipo/datos/**/*.joblib

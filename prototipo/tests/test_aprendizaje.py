@@ -12,8 +12,11 @@ from telescopio.simulador import (
     generar_noche,
     muestrear_montura,
     muestrear_sesion,
+    pointings_de_sondeo,
     trayectoria_sintetica,
 )
+
+SONDEO = 6  # pointings de sondeo al empezar cada noche, como en el protocolo real
 
 INICIO = datetime(2027, 1, 15, 1, 0, tzinfo=timezone.utc)
 
@@ -32,6 +35,9 @@ def _csv(tmp_path, nombre="d.csv", n_sesiones=4, filas=150, semilla=3, montura="
     `familia=True` usa una montura **distinta** en cada sesión, que es lo que hace la
     aleatorización de dominio. Con `False`, todas las sesiones son de la misma montura y solo
     cambian los términos de sesión, que es el caso real de Nashla.
+
+    Cada sesión son `SONDEO` pointings repartidos por el cielo y luego `filas` del arco de
+    seguimiento, que es el orden del protocolo: sondear antes de observar.
     """
     ruta = tmp_path / nombre
     ruta.unlink(missing_ok=True)  # guardar_seguimiento anexa: hay que partir de cero
@@ -40,10 +46,12 @@ def _csv(tmp_path, nombre="d.csv", n_sesiones=4, filas=150, semilla=3, montura="
     for j in range(n_sesiones):
         if familia:
             equipo = muestrear_montura(rng, f"{montura}{j}")
-        tray = trayectoria_sintetica(INICIO + timedelta(days=2 * j), filas, paso_s=60.0,
+        arranque = INICIO + timedelta(days=2 * j)
+        sondeo = pointings_de_sondeo(arranque, SONDEO, rng=rng)
+        tray = trayectoria_sintetica(arranque + timedelta(minutes=10), filas, paso_s=60.0,
                                      az_inicial=float(rng.uniform(0, 360)),
                                      alt_inicial=float(rng.uniform(15, 40)))
-        guardar_seguimiento(ruta, generar_noche(equipo, muestrear_sesion(rng), tray,
+        guardar_seguimiento(ruta, generar_noche(equipo, muestrear_sesion(rng), sondeo + tray,
                                                 nombre_sesion=f"{montura}-n{j}", rng=rng))
     return ruta
 
@@ -54,7 +62,7 @@ def datos(tmp_path):
 
 
 def test_cargar_lee_el_esquema_de_seguimiento(datos):
-    assert len(datos) == 4 * 150
+    assert len(datos) == 4 * (SONDEO + 150)
     assert len(datos.sesiones) == 4
     assert datos.rms > 0
     assert np.isfinite(datos.az).all() and np.isfinite(datos.d_az).all()
@@ -194,32 +202,236 @@ def test_noches_para_umbral():
     assert ap.noches_para_umbral(puntos, 1.0, "real") is None
 
 
-def test_la_transferencia_por_residuo_no_aporta_sobre_una_familia_centrada(tmp_path):
-    """Resultado negativo medido el 06/11/2026, fijado aquí para que no se pierda.
+def test_sin_sondeo_el_preentrenado_no_puede_distinguir_dos_monturas(tmp_path):
+    """La razón exacta por la que falló la transferencia sin condicionamiento.
 
-    Un modelo preentrenado sobre muchas monturas distintas solo puede predecir la **media de
-    la familia**, y la media no es ninguna montura concreta. Usarla como desplazamiento fijo
-    inyecta un error que no guarda relación con la montura real: la correlación entre lo que
-    predice y lo que habría que predecir es prácticamente cero.
+    Dos monturas **distintas** apuntadas a las mismas posiciones producen exactamente las
+    mismas entradas, porque las entradas solo describen dónde está el telescopio y en qué
+    condiciones. Así que el modelo predice para las dos lo mismo, por buenas que sean sus
+    predicciones: solo puede dar la media de la familia, y la media no es ninguna montura.
 
-    Medido con datos de tamaño realista (20 monturas, 8 noches): la correlación entre lo que
-    predice el preentrenado y lo que habría que predecir fue de **−0,003 en azimut y +0,031
-    en altitud**, mientras inyectaba 2,3′ de desplazamiento. Con el condicionamiento por
-    sondeo, la misma correlación subió a **+0,66 y +0,44**.
+    Esto es una identidad, no una medición: se cumple siempre, no depende de la semilla. Y
+    cubre a los tres modelos por igual, porque no habla del modelo sino de sus entradas.
 
-    Ver `docs/08-diseno-definitivo.md` §4. La reparación es condicionar el modelo con unas
-    pocas medidas de sondeo de la montura que tiene delante.
+    Con el sondeo las entradas sí se separan, que es la condición necesaria. **No basta**: que
+    el modelo llegue a usarlas depende de haber visto suficientes monturas distintas al
+    entrenar. Al escribir esta prueba, un boosting entrenado sobre 2 sesiones daba la misma
+    predicción para las dos, con sondeo y todo: nunca partía por esas columnas, porque no
+    había visto variación entre monturas que las justificara. De ahí que la familia sintética
+    tenga que ser amplia; el efecto medido está en `analisis/e5_transferencia.py`.
+
+    Ver `docs/08-diseno-definitivo.md` §4.
     """
-    propia = ap.cargar(_csv(tmp_path, "propia.csv", n_sesiones=3, semilla=1, montura="mia"))
-    familia = ap.cargar(_csv(tmp_path, "diversa.csv", n_sesiones=8, semilla=2,
-                             montura="otra", familia=True))
+    datos = ap.cargar(_csv(tmp_path, n_sesiones=2))
+    alineado, _ = ap.alinear_sesiones(datos)
 
-    ali_propia, _ = ap.alinear_sesiones(propia)
-    ali_familia, _ = ap.alinear_sesiones(familia)
+    # Misma geometría, errores distintos: dos monturas en las mismas posiciones del cielo.
+    otra = alineado.con_errores(alineado.d_az * 2.5 - 3.0, alineado.d_alt * 0.4 + 1.0)
 
-    previo = ap.entrenar(ali_familia, "boosting")
-    objetivo = ap.entrenar(ali_propia, "clasico").residuo(ali_propia)
-    pred_az, _ = previo.predecir_ml(ap.caracteristicas(ali_propia))
+    # Sin sondeo las entradas son idénticas, así que cualquier modelo predice lo mismo para
+    # las dos. No es cuestión de ajustar hiperparámetros: no hay información que usar.
+    assert np.array_equal(ap.caracteristicas(alineado), ap.caracteristicas(otra))
 
-    correlacion = abs(np.corrcoef(pred_az, objetivo.d_az)[0, 1])
-    assert correlacion < 0.25, "sobre una familia diversa no debería quedar señal transferible"
+    # Con sondeo se separan. Es condición necesaria para que la transferencia pueda funcionar.
+    assert not np.array_equal(ap.caracteristicas(ap.con_sondeo(alineado)),
+                              ap.caracteristicas(ap.con_sondeo(otra)))
+
+
+def test_el_sondeo_anade_cuatro_numeros_por_punto(datos):
+    alineado, _ = ap.alinear_sesiones(datos)
+    sondeado = ap.con_sondeo(alineado, 6)
+
+    assert sondeado.sondeo.shape == (len(alineado), 24)
+    assert sondeado.puntos_sondeo == 6
+    assert ap.caracteristicas(sondeado).shape[1] == ap.caracteristicas(alineado).shape[1] + 24
+    assert np.isfinite(sondeado.sondeo).all()
+
+
+def test_el_sondeo_es_el_mismo_en_toda_la_sesion_y_distinto_entre_sesiones(datos):
+    """Identifica la montura-en-esta-noche, así que es constante dentro de la sesión."""
+    alineado, _ = ap.alinear_sesiones(datos)
+    sondeado = ap.con_sondeo(alineado)
+
+    vectores = []
+    for s in sondeado.sesiones:
+        filas = sondeado.de_sesiones([s]).sondeo
+        assert np.allclose(filas, filas[0]), "dentro de una sesión el sondeo no puede variar"
+        vectores.append(filas[0])
+
+    for i in range(len(vectores)):
+        for j in range(i + 1, len(vectores)):
+            assert not np.allclose(vectores[i], vectores[j])
+
+
+def test_el_sondeo_de_una_sesion_no_mira_a_las_demas(datos):
+    """Sin esto, el sondeo sería una fuga entre noches y la validación no valdría."""
+    alineado, _ = ap.alinear_sesiones(datos)
+    original = ap.con_sondeo(alineado)
+
+    primera = alineado.sesiones[0]
+    otras = np.array([str(s) != primera for s in alineado.sesion])
+    estropeado = alineado.con_errores(
+        np.where(otras, alineado.d_az + 500.0, alineado.d_az), alineado.d_alt)
+    tocado = ap.con_sondeo(estropeado)
+
+    de_primera = np.array([str(s) == primera for s in alineado.sesion])
+    assert np.allclose(original.sondeo[de_primera], tocado.sondeo[de_primera])
+    assert not np.allclose(original.sondeo[otras], tocado.sondeo[otras])
+
+
+def test_sondeo_cero_deja_los_datos_como_estaban(datos):
+    alineado, _ = ap.alinear_sesiones(datos)
+    assert ap.con_sondeo(alineado, 0).sondeo is None
+    assert ap.con_sondeo(alineado, 0).es_sondeo is None
+    assert ap.con_sondeo(ap.con_sondeo(alineado, 6), 0).puntos_sondeo == 0
+
+
+def test_el_sondeo_marca_que_filas_son(datos):
+    """Hay que saber **qué** filas son el sondeo, no solo cuántas: con ellas se ajustan los
+    términos clásicos de la condición de cero noches."""
+    alineado, _ = ap.alinear_sesiones(datos)
+
+    primeras = ap.con_sondeo(alineado, 6, desde="primeras")
+    for s in primeras.sesiones:
+        noche = primeras.de_sesiones([s])
+        assert noche.es_sondeo[:6].all(), "con 'primeras' el sondeo va al principio"
+        assert not noche.es_sondeo[6:].any()
+
+    repartidas = ap.con_sondeo(alineado, 6, desde="reparto")
+    assert repartidas.es_sondeo.sum() <= primeras.es_sondeo.sum() + len(primeras.sesiones)
+    assert not np.array_equal(primeras.sondeo, repartidas.sondeo)
+
+
+def test_desde_desconocido(datos):
+    alineado, _ = ap.alinear_sesiones(datos)
+    with pytest.raises(ValueError, match="'primeras' o 'reparto'"):
+        ap.con_sondeo(alineado, 6, desde="por_ahi")
+
+
+def test_la_marca_del_sondeo_sobrevive_a_quedarse_con_una_noche(datos):
+    alineado, _ = ap.alinear_sesiones(datos)
+    sondeado = ap.con_sondeo(alineado, 6)
+    una = sondeado.de_sesiones([sondeado.sesiones[1]])
+    assert una.es_sondeo is not None and una.es_sondeo.sum() == 6
+    assert una.sondeo.shape == (len(una), 24)
+
+
+def test_cero_noches_usa_el_sondeo_para_los_terminos_clasicos(tmp_path):
+    """Heredar los términos clásicos de la familia es volver a usar su media.
+
+    Con `clasico_del_sondeo=True` se ajustan con los 6 puntos de esa noche, que son 12
+    ecuaciones para 7 términos. La prueba comprueba que de verdad cambian: si no cambiaran,
+    la opción no estaría haciendo nada.
+    """
+    propia, _ = ap.preparar(ap.cargar(_csv(tmp_path, "propia.csv", n_sesiones=3, semilla=1,
+                                           montura="mia")), 6)
+    familia, _ = ap.preparar(ap.cargar(_csv(tmp_path, "diversa.csv", n_sesiones=8, semilla=2,
+                                            montura="otra", familia=True)), 6)
+    previo = ap.entrenar(familia, "boosting")
+
+    de_familia = ap.sin_noches_reales(propia, previo, clasico_del_sondeo=False)
+    del_sondeo = ap.sin_noches_reales(propia, previo, clasico_del_sondeo=True)
+
+    assert set(de_familia.por_sesion) == set(del_sondeo.por_sesion)
+    assert de_familia.rms != del_sondeo.rms
+    # Cuál de las dos gana es una medición, no una identidad: está en analisis/e5_transferencia.py.
+
+
+def test_preparar_alinea_sondea_y_quita_las_filas_de_sondeo(tmp_path):
+    crudos = ap.cargar(_csv(tmp_path))
+    listos, ajustes = ap.preparar(crudos, SONDEO)
+
+    assert listos.rms < 0.1 * crudos.rms        # alineado
+    assert listos.puntos_sondeo == SONDEO       # sondeado
+    assert len(listos) == len(crudos) - 4 * SONDEO  # y sin las filas de calibración
+    assert set(ajustes) == set(crudos.sesiones)
+    assert set(listos.sesiones) == set(crudos.sesiones)
+
+
+def test_quitar_el_sondeo_de_la_evaluacion_cambia_el_resultado(tmp_path):
+    """Los pointings de sondeo van a altitudes altas y su error es mucho mayor.
+
+    Dejarlos dentro de la evaluación multiplicaba por tres el RMS de todas las condiciones,
+    midiendo la calibración en vez de la observación. Ver `Datos.observaciones`.
+    """
+    alineado, _ = ap.alinear_sesiones(ap.cargar(_csv(tmp_path)))
+    con_filas = ap.con_sondeo(alineado, SONDEO)
+    sin_filas = con_filas.observaciones()
+
+    assert len(sin_filas) == len(con_filas) - 4 * SONDEO
+    assert sin_filas.rms < con_filas.rms
+    assert sin_filas.puntos_sondeo == SONDEO  # los valores del sondeo siguen disponibles
+    assert sin_filas.observaciones() is sin_filas  # idempotente
+
+
+def test_los_valores_del_sondeo_sobreviven_a_quitar_sus_filas(tmp_path):
+    alineado, _ = ap.alinear_sesiones(ap.cargar(_csv(tmp_path)))
+    con_filas = ap.con_sondeo(alineado, SONDEO)
+    sesion = con_filas.sesiones[0]
+
+    esperado = con_filas.de_sesiones([sesion]).submuestra(
+        con_filas.de_sesiones([sesion]).es_sondeo)
+    az, alt, d_az, d_alt = con_filas.observaciones().valores_de_sondeo(sesion)
+
+    assert np.allclose(az, esperado.az) and np.allclose(alt, esperado.alt)
+    assert np.allclose(d_az, esperado.d_az) and np.allclose(d_alt, esperado.d_alt)
+
+
+def test_valores_de_sondeo_sin_sondeo_avisa(datos):
+    with pytest.raises(ValueError, match="no traen sondeo"):
+        datos.valores_de_sondeo(datos.sesiones[0])
+
+
+@pytest.mark.parametrize("desde", ["primeras", "reparto"])
+def test_una_sesion_mas_corta_que_el_sondeo_no_rompe(tmp_path, desde):
+    """Pedir más puntos de sondeo que filas tiene la sesión: repite, no revienta."""
+    datos = ap.cargar(_csv(tmp_path, n_sesiones=2, filas=4))  # 2 x (6 + 4) = 20 filas
+    sondeado = ap.con_sondeo(datos, 20, desde=desde)
+    assert sondeado.sondeo.shape == (len(datos), 80)
+    assert np.isfinite(sondeado.sondeo).all()
+    assert sondeado.observaciones() is not None
+
+
+def test_entrenar_avisa_si_el_previo_trae_otro_numero_de_puntos(tmp_path):
+    datos = ap.cargar(_csv(tmp_path))
+    alineado, _ = ap.alinear_sesiones(datos)
+    previo = ap.entrenar(ap.con_sondeo(alineado, 6), "boosting")
+    with pytest.raises(ValueError, match="puntos de sondeo"):
+        ap.entrenar(ap.con_sondeo(alineado, 3), "boosting", previo=previo)
+
+
+def test_cero_noches_reales_necesita_sondeo(tmp_path):
+    datos = ap.cargar(_csv(tmp_path))
+    alineado, _ = ap.alinear_sesiones(datos)
+    previo = ap.entrenar(alineado, "boosting")
+    with pytest.raises(ValueError, match="Sin sondeo"):
+        ap.sin_noches_reales(alineado, previo)
+
+
+def test_cero_noches_reales_evalua_todas_las_noches(tmp_path):
+    propia, _ = ap.preparar(ap.cargar(_csv(tmp_path, "propia.csv", n_sesiones=3, semilla=1,
+                                           montura="mia")), 6)
+    familia, _ = ap.preparar(ap.cargar(_csv(tmp_path, "diversa.csv", n_sesiones=8, semilla=2,
+                                            montura="otra", familia=True)), 6)
+    previo = ap.entrenar(familia, "boosting")
+
+    r = ap.sin_noches_reales(propia, previo)
+    assert set(r.por_sesion) == set(propia.sesiones)
+    assert r.n_entrenamiento == 0  # ninguna noche real: es el sentido de la condición
+    assert r.estrategia == "simulacion"
+    assert np.isfinite(r.rms)
+
+
+def test_la_curva_admite_cero_noches_solo_con_simulacion(tmp_path):
+    reales, _ = ap.preparar(ap.cargar(_csv(tmp_path, "r.csv", semilla=1, montura="mia")), 6)
+    sinteticos = ap.cargar(_csv(tmp_path, "s.csv", n_sesiones=8, semilla=2, montura="otra",
+                                familia=True))
+
+    solos = ap.curva_de_aprendizaje(reales, "boosting", n_noches=[0, 1], repeticiones=2)
+    assert {p.n_noches for p in solos} == {1}, "sin sintéticos no existe el punto de 0 noches"
+
+    con = ap.curva_de_aprendizaje(reales, "boosting", sinteticos=sinteticos,
+                                  n_noches=[0, 1], repeticiones=2)
+    cero = [p for p in con if p.n_noches == 0]
+    assert len(cero) == 1 and cero[0].estrategia == "simulacion"
+    assert np.isfinite(cero[0].rms)

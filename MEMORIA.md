@@ -183,3 +183,37 @@ real entre enero y abril.
   condicionar el modelo con 6 puntos de sondeo sube la correlación a +0,66 y baja el error de
   azimut de 3,70' a 2,86' sin ninguna noche real. **Pendiente de la decisión de Nashla**,
   porque cambia el método de `docs/08` §4.
+- **2026-11-07:** Nashla autoriza rehacer la transferencia con condicionamiento por sondeo. Se
+  implementa (`con_sondeo`, `sin_noches_reales`, `pointings_de_sondeo`, `analisis/e5_transferencia.py`)
+  y **el resultado es negativo en las tres variantes**. Cambia el aporte del artículo.
+  - La reparación del 06/11 **era una semilla afortunada**. Daba 2,92' con cero noches reales y
+    p = 0,0078, el mínimo posible con 8 noches. Al repetir el mismo experimento con otras
+    monturas sorteadas de la **misma** distribución, se sostuvo en 4 de 6 sorteos y se dio la
+    vuelta en 2. También la correlación de +0,66 era inestable: entre semillas iba de 0,009 a
+    0,737, en los dos sentidos.
+  - Tercera variante, con los puntos de sondeo repartidos por todo el cielo (que es lo que se
+    haría en campo): **peor**, por dos causas medidas. Los pointings a altitud alta corrompen
+    la alineación de la sesión, porque el ajuste de 4 términos de sesión absorbe su error
+    persistente, que es enorme por el factor `tan(h)` (punto ciego del cenit). Y reajustar los
+    términos clásicos con 6 puntos está malísimamente condicionado: tiene rango completo, pero
+    `sec(h)` y `tan(h)` son casi colineales y `lstsq` da coeficientes que explotan al
+    extrapolar (RMS > 1 000'). **Tener rango no es estar bien condicionado.**
+  - **Lo que sí se sostiene, 6 de 6 sorteos:** el corrector aprendido vence al modelo clásico,
+    mediana 3,93' -> 3,50', 4 de 6 con p < 0,05. Ese es el resultado del artículo.
+  - El sondeo queda implementado y **apagado por defecto**, con las mediciones en los
+    docstrings, para poder reproducir el negativo en la Discusión.
+  - Se retira de las pruebas el aserto estadístico del resultado negativo del 06/11: estaba
+    colgado de una semilla (entre semillas el valor iba de 0,029 a 0,737, y la prueba exigía
+    < 0,25). Lo sustituye una **identidad**, que no depende de la semilla: dos monturas
+    distintas en las mismas posiciones producen las mismas entradas, así que ningún modelo sin
+    sondeo puede distinguirlas. 101 pruebas en verde.
+  - **Regla nueva del repositorio:** un valor de p sobre las noches de una montura no dice si
+    el efecto se repetiría con otra montura. Todo experimento diseñado en simulación se repite
+    con varios sorteos independientes y se publica en cuántos se sostiene. Queda en `docs/08`
+    §6 y en `analisis/LEEME.md`.
+- **2026-11-07 · PENDIENTE CON EL TUTOR:** el aporte (`docs/08` §1), la pregunta, H3, el
+  objetivo general y el objetivo 4 (§2) y el título (§8) estaban construidos sobre el
+  preentrenamiento y **ya no corresponden**. Quedan tachados, con propuesta de reemplazo al
+  lado, y marcados para hablarlos con el Ing. Corrales. Título propuesto (16 palabras):
+  "Corrección del apuntado de una montura altacimutal de bajo costo con aprendizaje automático
+  sobre el residuo". H1, H2, H4 y los objetivos 1, 2, 3 y 5 se mantienen intactos.

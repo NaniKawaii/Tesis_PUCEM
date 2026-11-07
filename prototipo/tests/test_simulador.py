@@ -182,6 +182,49 @@ def test_el_muestreo_respeta_los_rangos_declarados():
     assert sesion.flexion == 0.0
 
 
+def test_los_pointings_de_sondeo_cubren_el_cielo_y_no_un_arco():
+    """La diferencia que decidió el metodo, medida el 07/11/2026.
+
+    Seis puntos tomados a lo largo del arco de una noche cubren ~80° de azimut y no permiten
+    identificar la montura. Seis pointings de sondeo tienen que cubrir el circulo entero y un
+    rango amplio de altitud, que es lo que hace uno en campo al elegir estrellas de alineacion
+    separadas. Ver `telescopio.simulador.pointings_de_sondeo`.
+    """
+    from telescopio.simulador import pointings_de_sondeo
+
+    rng = np.random.default_rng(4)
+    puntos = pointings_de_sondeo(INICIO, 6, rng=rng)
+    assert len(puntos) == 6
+
+    az = np.sort([p.az for p in puntos])
+    # Repartidos en el circulo: el hueco mayor entre consecutivos no llega a un cuadrante.
+    huecos = np.diff(np.concatenate([az, [az[0] + 360.0]]))
+    assert huecos.max() < 90.0, f"azimut mal repartido: {az}"
+
+    alt = np.array([p.alt for p in puntos])
+    assert np.ptp(alt) > 40.0, "hace falta rango en altitud para separar flexion y no perp."
+    assert (alt >= 15.0).all() and (alt <= 80.0).all()
+
+    # Un arco de 4 horas, en cambio, cubre una fraccion del cielo.
+    arco = trayectoria_sintetica(INICIO, 1440, paso_s=10.0)
+    assert np.ptp([p.az for p in arco]) < 100.0
+
+
+def test_dos_sondeos_no_caen_siempre_en_el_mismo_sitio():
+    from telescopio.simulador import pointings_de_sondeo
+
+    uno = [p.az for p in pointings_de_sondeo(INICIO, 6, rng=np.random.default_rng(1))]
+    dos = [p.az for p in pointings_de_sondeo(INICIO, 6, rng=np.random.default_rng(2))]
+    assert uno != dos
+    assert [p.az for p in pointings_de_sondeo(INICIO, 6, rng=np.random.default_rng(1))] == uno
+
+
+def test_un_sondeo_vacio_no_rompe():
+    from telescopio.simulador import pointings_de_sondeo
+
+    assert pointings_de_sondeo(INICIO, 0, rng=np.random.default_rng(0)) == []
+
+
 def test_la_fase_lunar_queda_entre_cero_y_uno():
     for dias in range(0, 60, 3):
         fase = fase_lunar_aproximada(INICIO.replace(day=1) + __import__("datetime").timedelta(days=dias))
@@ -193,9 +236,10 @@ def test_generar_dataset_escribe_un_csv_legible(tmp_path):
     parametros = tmp_path / "monturas.csv"
     resumen = generar_dataset(csv, n_monturas=3, noches_por_montura=2,
                               minutos_por_noche=2.0, paso_s=1.0, semilla=0,
-                              ruta_parametros=parametros)
+                              ruta_parametros=parametros, puntos_sondeo=6)
 
-    assert resumen["filas"] == 3 * 2 * 120
+    # Cada noche son los 6 pointings del sondeo mas el arco de seguimiento.
+    assert resumen["filas"] == 3 * 2 * (6 + 120)
     assert resumen["sesiones"] == 6
     assert resumen["rms_arcmin"] > 0
 
@@ -216,10 +260,10 @@ def test_la_linea_de_comandos_funciona_y_no_imprime_fuera_de_ascii(tmp_path, cap
 
     salida = tmp_path / "cli.csv"
     assert main(["--salida", str(salida), "--monturas", "2", "--noches", "1",
-                 "--minutos", "1", "--paso", "1"]) == 0
+                 "--minutos", "1", "--paso", "1", "--sondeo", "6"]) == 0
 
     texto = capsys.readouterr().out
-    assert "120 filas" in texto
+    assert "132 filas" in texto  # 2 monturas x (6 de sondeo + 60 del arco)
     texto.encode("cp1252")  # falla si se cuela un caracter que Windows no sabe imprimir
     assert salida.exists()
 
