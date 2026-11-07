@@ -169,3 +169,7 @@ real entre enero y abril.
   midió que **sobre un arco corto los efectos no lineales son indistinguibles del modelo
   lineal** (razón 1,04 en 20 minutos frente a 3,13 en 4 horas): la cobertura del cielo, y no el
   número de filas, es lo que limita el aprendizaje. Queda en `docs/08` §4.
+- **2026-11-06 (tarde):** se cierra el PR #1 sin fusionar. Solo aportaba la versión anterior de
+  `MEMORIA.md` (alcance de 3 módulos x 3 modelos x 3 formas de entrenar, ya superado) y una
+  línea del README que esta rama ya tiene. La rama `claude/project-thread-zcrk5b` queda en el
+  remoto como registro histórico. Este archivo pasa a ser la única fuente de verdad.
