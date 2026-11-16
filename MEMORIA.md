@@ -239,3 +239,29 @@ real entre enero y abril.
   - **Pendiente con el tutor**, junto al pendiente 1 del 07/11: qué es la propuesta para la
     tesis (reemplazo, proyecto paralelo o trabajo futuro), quién pone el hardware, cuál sería
     la autoría, y si su estudio podría correr sobre esta montura en vez de sobre una nueva.
+- **2026-11-16:** Nashla dice que ya no entiende cuál debe ser el enfoque, qué estudiar, qué
+  programar ni qué construir, y pide un cronograma. Se escribe
+  `docs/11-tu-articulo-en-una-pagina.md`, que **cierra todas las decisiones que estaban
+  abiertas** en vez de dejarlas pendientes:
+  - **Aporte y título fijados** (los del 07/11, que estaban propuestos pero sin confirmar): el
+    corrector aprendido sobre el residuo vence al modelo clásico, 6 de 6 sorteos, 3,93' → 3,50'.
+    Título de 16 palabras: "Corrección del apuntado de una montura altacimutal de bajo costo con
+    aprendizaje automático sobre el residuo".
+  - **Hipótesis: quedan tres.** La antigua H3 (preentrenamiento) se elimina sin reemplazo y la
+    H4 pasa a ser H3. El objetivo 4 queda descriptivo, sin hipótesis asociada: cuantificar la
+    curva de error frente al número de noches.
+  - **Cámara decidida: Raspberry Pi HQ Camera + lente C-mount de 25–28 mm** (USD 50–90), que
+    cierra el pendiente 2 de `docs/08` §13. **El criterio es el campo de visión, no la
+    resolución:** 13° × 10° frente a los 1,9° × 1,0° de la Camera Module 3 con guía de 200 mm de
+    la propuesta del tutor. Con un error de apuntado de ~1° antes de corregir, el campo estrecho
+    deja la Luna fuera del cuadro en buena parte de los apuntados. La resolución de ~12"/px
+    sobra: el efecto a medir es de 0,43' ≈ 26" ≈ 2 px, y un ajuste de círculo al limbo da ~6".
+  - **Se anota que `articulo/articulo_v2.docx` corresponde al alcance anterior.** Se conserva
+    formato, maquetación, bibliografía y buena parte de la Introducción; se reescriben título,
+    resumen, pregunta, objetivos, hipótesis, metodología y resultados; se elimina el estudio de
+    usabilidad con SUS.
+  - **Cronograma recalculado desde el 16/11:** quedan 13,6 semanas. El de `docs/08` §9 arrancaba
+    el 06/11 y el frente de hardware no se movió. Hito de no retorno: fin de la semana 5
+    (20/12). Las noches caen sobre Navidad y Año Nuevo.
+  - **Bloqueo real identificado:** no se han comprado las poleas GT2, el lazy susan ni la
+    cámara. Sin ellos no hay montura y sin montura no hay mediciones.
