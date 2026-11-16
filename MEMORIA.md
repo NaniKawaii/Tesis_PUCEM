@@ -217,3 +217,25 @@ real entre enero y abril.
   lado, y marcados para hablarlos con el Ing. Corrales. Título propuesto (16 palabras):
   "Corrección del apuntado de una montura altacimutal de bajo costo con aprendizaje automático
   sobre el residuo". H1, H2, H4 y los objetivos 1, 2, 3 y 5 se mantienen intactos.
+- **2026-11-16:** el Ing. Corrales envía la propuesta *"Edge-AI en hardware embebido de bajo
+  coste… estudio comparativo de inferencia en CPU, acelerador y nube"* (v3, 15 pp.). Revisada
+  en `docs/10-revision-propuesta-edge-ai.md`. **Es otro proyecto, no una mejora de este:** 6
+  meses, 90 episodios, dos manuscritos IEEE, y pregunta dónde ejecutar el plate solving, no si
+  el corrector aprendido vence al clásico. No cabe en las 15 semanas.
+  - **Cambiarse costaría ~USD 540–610:** deja sin uso los USD 256,54 del núcleo de la factura
+    (NEMA 23, TB6600, Pi 4, GPS, GY-91, AS5600; ninguno aparece en la propuesta) y pide
+    USD 283–353 de hardware nuevo, cuenta AWS y un PC x86_64 para compilar el HEF del Hailo.
+    La Pi 5 y los NEMA 17 que la propuesta marca "en posesión" son del tutor, no de Nashla.
+  - **La propuesta le da la razón a esta montura**, con sus propios números: su Figura 4 admite
+    que el NEMA 17 *"no puede mover el tubo"* desequilibrado (0,28 N·m frente a los 4,91 N·m
+    que pide), mientras esta montura da ~4,75 N·m en el eje de altitud. Y dice que la correa de
+    5:1 es lo único que compra exactitud frente al error de ángulo de paso de ±5,4′, pero la
+    deja fuera de su diseño: aquí ya está, con ±1,08′ en altitud y ±0,39′ en azimut.
+  - **Cinco ideas que sí se adoptan** (`docs/10` §5): verificar con un solver independiente del
+    propio, un tercer candidato para la decisión de la cámara (Camera Module 3 + guía de 50 mm,
+    6,9″/px por ~80 USD), descomponer el error en cuatro términos físicos (periódico, flexión,
+    refracción, backlash, con la regla de aproximarse siempre desde la misma dirección),
+    reportar latencia en p50/p95 y medir la energía con un INA219.
+  - **Pendiente con el tutor**, junto al pendiente 1 del 07/11: qué es la propuesta para la
+    tesis (reemplazo, proyecto paralelo o trabajo futuro), quién pone el hardware, cuál sería
+    la autoría, y si su estudio podría correr sobre esta montura en vez de sobre una nueva.
