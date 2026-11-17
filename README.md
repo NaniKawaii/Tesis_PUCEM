@@ -1,6 +1,6 @@
 # Tesis PUCEM · Sistema de posicionamiento telescópico con IA y control web
 **Autora:** Nashla Carolina Tuma Zambrano · Ingeniería de Software, PUCE Sede Manabí
-**Tutor:** Ing. Diego Paul Corrales Vargas, Mg.
+**Tutor:** Ing. Alex Ricauter (desde el 17/11/2026; antes, Ing. Diego Paul Corrales Vargas, Mg.)
 **Modalidad:** publicación de un artículo científico (revista *Esprint Investigación*).
 ## Contenido
 | Carpeta | Qué hay |
@@ -16,7 +16,7 @@
 | [`docs/09-manos-a-la-obra.md`](docs/09-manos-a-la-obra.md) | ⭐ **Quién hace qué y en qué orden**: los tres frentes en paralelo, los módulos de software por escribir, tus pasos semana a semana y las medidas que hacen falta |
 | [`docs/10-revision-propuesta-edge-ai.md`](docs/10-revision-propuesta-edge-ai.md) | **Revisión de la propuesta Edge-AI del Ing. Corrales**: por qué es otro proyecto, qué costaría cambiarse y las cinco ideas que sí conviene adoptar |
 | [`docs/11-tu-articulo-en-una-pagina.md`](docs/11-tu-articulo-en-una-pagina.md) | ⭐ **EMPIEZA AQUÍ**: el aporte, el título, la pregunta, las hipótesis, la cámara, el cronograma desde hoy y lo único que toca esta semana |
-| [`docs/12-propuesta-para-el-tutor.md`](docs/12-propuesta-para-el-tutor.md) | **Documento formal para el tutor**: propuesta de ajuste del enfoque, con seis preguntas concretas para que responda |
+| [`docs/12-propuesta-para-el-tutor.md`](docs/12-propuesta-para-el-tutor.md) | **Documento formal para el tutor** (Ing. Alex Ricauter): estado del trabajo, propuesta de enfoque y seis preguntas concretas para que responda |
 | [`MEMORIA.md`](MEMORIA.md) | **Decisiones vigentes** del artículo, con su historial fechado |
 | [`articulo/`](articulo/LEEME.md) | **Artículo científico v2** en Word con el formato de la revista Esprint |
 | [`circuito/`](circuito/LEEME.md) | **Esquema de conexiones**, tabla pin por pin, configuración de los TB6600, prueba de banco paso a paso y **plano de cableado dentro de la caja** |

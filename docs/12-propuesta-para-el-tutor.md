@@ -1,6 +1,6 @@
-# Propuesta de ajuste del enfoque del artículo
+# Propuesta de enfoque del artículo, para revisión del tutor
 
-**Para:** Ing. Diego Paul Corrales Vargas, tutor  
+**Para:** Ing. Alex Ricauter, tutor  
 **De:** Nashla Carolina Tuma Zambrano · ntuma6749@pucesm.edu.ec  
 **Carrera de Software · Unidad de Integración Curricular · PUCE Sede Manabí**  
 **Fecha:** 17 de noviembre de 2026
@@ -9,32 +9,57 @@
 
 ## 1. Propósito de este documento
 
-Le presento un **ajuste del enfoque del artículo** y le pido su criterio antes de continuar.
+Ingeniero, le escribo en dos sentidos: **ponerlo al tanto del estado del trabajo**, ahora que
+asume la tutoría, y **pedirle su criterio sobre un ajuste de enfoque** que propongo antes de
+entrar a la fase de campo.
 
-El cambio nace de una comprobación que hice en simulación: **el aporte que habíamos planteado
-no sobrevivió a su propia verificación**. En lugar de seguir adelante y descubrirlo en campo,
-preferí detenerme, medirlo y traerle una propuesta alternativa, sustentada en los datos que
-obtuve.
+El documento es breve y está organizado para que pueda revisarlo por partes. Al final hay
+**seis preguntas concretas**. La tercera es la que más me importa: si a su juicio el aporte
+que propongo es suficiente para el artículo, o si considera que debería ampliarse.
 
-Al final del documento hay **seis preguntas concretas** que necesito que me responda para
-avanzar. La más importante es la cuarta: si a su juicio este enfoque es suficiente para el
-artículo, o si considera que debería ampliarse.
+**En una frase, lo que propongo demostrar:**
+
+> Un corrector de aprendizaje automático entrenado sobre el **residuo** del modelo clásico de
+> apuntado reduce el error de una montura altacimutal de bajo costo construida con impresión
+> 3D, y se cuantifica cuántas noches de observación reales hacen falta para lograrlo.
 
 ---
 
-## 2. Antecedente: por qué propongo un ajuste
+## 2. Estado del trabajo
 
-El aporte vigente era que **el preentrenamiento en simulación con aleatorización de dominio
-reduciría el número de noches de observación reales** necesarias para corregir el apuntado.
+Para que tenga el panorama completo, esto es lo que ya existe:
 
-Antes de construir el prototipo implementé el simulador y probé esa hipótesis. Se ensayaron
+| | Estado |
+|---|---|
+| **Montura** | 13 piezas diseñadas de forma paramétrica, con verificación por computadora de que no hay interferencias en todo el recorrido del tubo. Archivos STL listos para imprimir |
+| **Electrónica** | Esquema de conexiones cable por cable, plano de cableado interno y procedimiento de prueba de banco en 11 pasos |
+| **Software** | Modelo de error paramétrico, simulador, registrador y cuatro modelos de aprendizaje con validación dejando una noche fuera. 101 pruebas automáticas |
+| **Compras** | Componentes principales adquiridos. Pendientes las poleas de transmisión, el rodamiento giratorio y la cámara |
+| **Artículo** | Redactado en el formato de la revista Esprint Investigación, con la bibliografía verificada. Pendiente de rehacer la metodología y los resultados según el enfoque que aquí propongo |
+| **Campo** | **Sin empezar.** Es lo que viene |
+
+Todo el material está documentado y disponible para su revisión: diseño mecánico, código,
+datos de simulación y el registro fechado de cada decisión.
+
+---
+
+## 3. Por qué propongo un ajuste de enfoque
+
+El enfoque aprobado inicialmente sostenía que **el preentrenamiento en simulación con
+aleatorización de dominio reduciría el número de noches de observación reales** necesarias
+para corregir el apuntado.
+
+Antes de construir el prototipo implementé el simulador y puse a prueba esa hipótesis. Ensayé
 **tres variantes, y las tres dieron resultado negativo**:
 
 | Variante | Resultado medido |
 |---|---|
 | Transferencia directa del residuo | **Empeora** el error en todos los casos. La correlación entre lo predicho y el error real fue de **−0,003**: un modelo entrenado sobre monturas diversas solo puede predecir la media de la familia, porque nada en su entrada le dice a qué montura se enfrenta |
-| Condicionamiento con 6 puntos de sondeo | Pareció funcionar (correlación +0,66; azimut de 3,70′ a 2,86′), pero **era una semilla afortunada**: al repetirlo con otras monturas sorteadas de la misma distribución, se sostuvo en 4 de 6 y se invirtió en 2. La correlación oscilaba entre 0,009 y 0,737 según la semilla |
+| Condicionamiento con 6 puntos de sondeo | Pareció funcionar (correlación +0,66; azimut de 3,70′ a 2,86′), pero **era una semilla afortunada**: al repetirlo con otras monturas sorteadas de la misma distribución se sostuvo en 4 de 6 y se invirtió en 2. La correlación oscilaba entre 0,009 y 0,737 según la semilla |
 | Sondeo repartido por todo el cielo | **Peor**, por dos causas identificadas: los apuntados a altitud alta corrompen la alineación de sesión por el factor tan(*h*), y el reajuste con 6 puntos queda mal condicionado porque sec(*h*) y tan(*h*) son casi colineales, con coeficientes que al extrapolar dan RMS superior a 1 000′ |
+
+Preferí detenerme y medirlo antes que descubrirlo en campo, cuando ya no habría tiempo de
+corregir el rumbo.
 
 De este proceso salió una **regla metodológica** que adopté para todo el trabajo y que creo
 que vale la pena declarar en el artículo:
@@ -55,13 +80,7 @@ resultado que propongo como aporte del artículo.
 
 ---
 
-## 3. El enfoque que propongo
-
-### Aporte
-
-> Un corrector de aprendizaje automático entrenado sobre el **residuo** del modelo clásico de
-> apuntado reduce el error de una montura altacimutal de bajo costo construida con impresión
-> 3D, y se cuantifica cuántas noches de observación reales hacen falta para lograrlo.
+## 4. El enfoque que propongo
 
 ### Título (16 palabras, sin abreviaturas, dentro del límite de la revista)
 
@@ -95,10 +114,6 @@ web" cuando la interfaz dejó de ser objeto de estudio.
    → **E4**
 5. Validar el sistema completo en lazo cerrado durante seguimiento continuo. → **E5**
 
-> El objetivo 4 es el que cambia: pierde la rama de comparación con simulación y queda como
-> objetivo descriptivo. La pregunta de las noches sigue siendo interesante y sí se puede
-> responder; lo que se cae es compararla contra el preentrenamiento.
-
 ### Hipótesis
 
 | | Enunciado | Experimento |
@@ -112,7 +127,7 @@ asociada, por ser descriptivo.
 
 ---
 
-## 4. Decisión metodológica central
+## 5. Decisión metodológica central
 
 **La inteligencia artificial aprende el residuo, no la posición.**
 
@@ -127,16 +142,26 @@ asociada, por ser descriptivo.
                         Cámara + detector ─────────────┘
 ```
 
-Skyfield calcula la posición de la Luna con precisión de segundos de arco. Entrenar una red
-para competir con eso sería resolver un problema ya resuelto. Lo que ningún modelo físico sabe
-es cuánto flexiona *este* PETG, cuánta holgura tienen *estas* reducciones impresas y cuánto
-está desnivelado *este* trípode.
+Skyfield calcula la posición de la Luna con precisión de segundos de arco a partir de las
+efemérides del Jet Propulsion Laboratory. Entrenar una red para competir con eso sería
+resolver un problema ya resuelto. Lo que ningún modelo físico sabe es cuánto flexiona *este*
+PETG, cuánta holgura tienen *estas* reducciones impresas y cuánto está desnivelado *este*
+trípode.
 
 Primero se ajustan por mínimos cuadrados los términos clásicos conocidos de una montura
 altacimutal (desfases de índice, desnivel del eje de azimut, no perpendicularidad entre ejes y
-del eje óptico, flexión del tubo) y la IA aprende solo lo que queda. Es el procedimiento de
-**Mu et al. (2026)** y **Hu y Zhu (2026)**, de modo que cada decisión tiene respaldo
-bibliográfico.
+del eje óptico, flexión del tubo) y la inteligencia artificial aprende solo lo que queda. Es el
+procedimiento de **Mu et al. (2026)** y **Hu y Zhu (2026)**, de modo que cada decisión tiene
+respaldo bibliográfico.
+
+### Los cuatro términos del error, y cómo se trata cada uno
+
+| Término | Tratamiento |
+|---|---|
+| **Error periódico** | Se captura un campo a intervalos fijos durante una vuelta entera del eje y se ajusta una serie de Fourier al residuo |
+| **Flexión** | Varía con la altitud. Se caracteriza con una corrida sobre una rejilla de altitudes y un polinomio de orden bajo |
+| **Refracción atmosférica** | **No se aprende**: se calcula con la presión y la temperatura locales y un modelo atmosférico estándar, y se aplica como corrección previa |
+| **Backlash y fricción estática** | No se modelan, **se acotan**: todo movimiento comandado llega al objetivo desde la misma dirección, de modo que la histéresis residual queda medida y no estimada |
 
 ### Error de sesión frente a error persistente
 
@@ -149,7 +174,7 @@ Esta distinción define el protocolo de medición:
 
 Lo de sesión **se calibra**, con una alineación rápida de 2 o 3 puntos al inicio de cada
 sesión, más la lectura directa del desnivel con el acelerómetro. Lo persistente **es lo que
-aprende la IA**, y es lo único que se transfiere de una noche a otra.
+aprende el modelo**, y es lo único que se transfiere de una noche a otra.
 
 De aquí sale un argumento que creo que fortalece la justificación del trabajo: un observatorio
 atornilla el telescopio a un pilar y su modelo de apuntado vale meses. **Una montura portátil
@@ -159,7 +184,7 @@ método sirve o no para equipo portátil.
 
 ---
 
-## 5. Diseño experimental
+## 6. Diseño experimental
 
 | | Experimento | Qué se mide | Estadística |
 |---|---|---|---|
@@ -169,8 +194,13 @@ método sirve o no para equipo portátil.
 | **E4** | Curva de error frente al número de noches | RMS contra N noches | Wilcoxon pareado entre N consecutivos |
 | **E5** | Sistema completo en lazo cerrado | % del tiempo con la Luna centrada; RMS de seguimiento | Wilcoxon pareado entre tres modos |
 
-**Validación dejando una noche fuera**, nunca partición aleatoria de filas: dos filas
-consecutivas del mismo minuto son casi la misma observación, y mezclarlas infla el resultado.
+Dos salvaguardas metodológicas que quiero señalarle:
+
+- **Validación dejando una noche fuera**, nunca partición aleatoria de filas: dos filas
+  consecutivas del mismo minuto son casi la misma observación, y mezclarlas infla el resultado.
+- **La posición de verificación la resuelve un procedimiento distinto del que usa el corrector.**
+  Si midiera el error con el mismo modelo que lo corrige, un sesgo sistemático quedaría
+  enmascarado y el resultado no sería válido.
 
 ### Cuántas noches hacen falta
 
@@ -188,7 +218,7 @@ queden ocho.
 
 ---
 
-## 6. Lo que propongo retirar, y una consulta administrativa
+## 7. Lo que propongo retirar, y una consulta administrativa
 
 | Se retira | Razón |
 |---|---|
@@ -204,21 +234,9 @@ Nada de esto se descarta del trabajo: todo pasa a la sección de **trabajo futur
 
 ---
 
-## 7. Estado del prototipo y cronograma
+## 8. Instrumento de medida y cronograma
 
-### Lo que ya está hecho
-
-- **Montura:** 13 piezas diseñadas de forma paramétrica, con verificación por computadora de
-  que no hay interferencias en todo el recorrido del tubo. Archivos STL listos para imprimir.
-- **Electrónica:** esquema de conexiones cable por cable, plano de cableado interno y
-  procedimiento de prueba de banco en 11 pasos.
-- **Software:** modelo de error paramétrico, simulador con aleatorización de dominio,
-  registrador y los cuatro modelos de aprendizaje con validación dejando una noche fuera.
-  101 pruebas automáticas en verde.
-- **Compras:** componentes principales adquiridos. Pendientes las poleas GT2, el rodamiento
-  giratorio y la cámara.
-
-### Instrumento de medida
+### La cámara
 
 Seleccioné una **Raspberry Pi HQ Camera con lente de 25–28 mm** (USD 50–90). El criterio
 decisivo fue el campo de visión, no la resolución: el error de apuntado antes de corregir es
@@ -248,66 +266,24 @@ ya que E1, E3 y E4 miden el error *de la montura*, no del cielo.
 
 ---
 
-## 8. Sobre su propuesta de Edge-AI
-
-Leí completa la propuesta *"Edge-AI en hardware embebido de bajo coste para el apuntado
-autónomo de objetos celestes"* que me compartió. Me parece un trabajo valioso y bien
-fundamentado, y agradezco que me lo haya hecho llegar.
-
-**Cuatro ideas suyas las incorporo a mi artículo**, porque mejoran la metodología sin costo:
-
-1. **Verificar el apuntado con un solver independiente del propio**, para que un sesgo
-   sistemático del modelo aprendido no pueda enmascararse. Es la que más valor me aporta.
-2. **Descomponer el modelo de error en cuatro términos físicos** (error periódico, flexión,
-   refracción, backlash y fricción estática), y acotar el backlash aproximándose siempre desde
-   la misma dirección.
-3. **Reportar la latencia en p50 y p95**, en lugar de media y desviación.
-4. **Medir la energía por sesión con un INA219**, en lugar de estimarla.
-
-**No puedo adoptar el conjunto de la propuesta**, por dos razones de alcance:
-
-- **Tiempo.** Su cronograma es de seis meses, con 90 episodios y dos manuscritos. A mí me
-  quedan 13,6 semanas.
-- **Hardware.** Su diseño usa Raspberry Pi 5, NEMA 17 y TMC2209, y yo ya tengo adquiridos
-  Raspberry Pi 4, NEMA 23 y TB6600, además del GPS, el GY-91 y el AS5600, que no intervienen en
-  su arquitectura. Cambiar dejaría sin uso unos USD 257 ya invertidos y exigiría unos USD 283
-  adicionales, más una cuenta en la nube y un equipo x86 para compilar el modelo del acelerador.
-
-**Una propuesta de colaboración.** Su documento señala que la única modificación de diseño que
-compra exactitud frente al error de ángulo de paso del motor (±5,4′ con cualquier subdivisión)
-es una transmisión por correa de 5:1, y que el accionamiento directo exige el tubo equilibrado
-dentro de ±8 mm para que el motor pueda moverlo.
-
-Mi montura ya tiene esa transmisión —±1,08′ en altitud y ±0,39′ en azimut— y dispone de unos
-**4,75 N·m en el eje de altitud** frente a los 0,28 N·m del acople directo, lo que le da margen
-incluso con el tubo desequilibrado.
-
-**¿Tendría sentido que su estudio comparativo corriera sobre esta montura, en lugar de
-construir una nueva?** Mi trabajo entregaría la plataforma mecánica caracterizada y el suyo
-aportaría la comparación de sustratos de inferencia. Me parece que así los dos trabajos se
-suman en vez de duplicarse.
-
----
-
 ## 9. Preguntas concretas
 
-1. **¿Aprueba el cambio de aporte** y el título propuesto de 16 palabras?
-2. **¿El cambio de título y del objetivo 4 requieren trámite** ante la Unidad de Integración
-   Curricular?
-3. **¿Aprueba retirar el estudio de usabilidad con escala SUS**, considerando que era un
-   objetivo del plan aprobado y que la rúbrica del lector no lo evalúa?
-4. **¿Considera que este aporte es suficiente para el artículo**, o estima que debería
+1. **¿Aprueba el cambio de enfoque** y el título propuesto de 16 palabras?
+2. **¿El cambio de título, el retiro del estudio de usabilidad y la modificación del objetivo 4
+   requieren trámite** ante la Unidad de Integración Curricular?
+3. **¿Considera que este aporte es suficiente para el artículo**, o estima que debería
    ampliarse? Si cree que falta algo, le agradecería que me indique qué, para evaluar si cabe
    en las semanas disponibles.
-5. **¿Está de acuerdo con fijar 8 noches como requisito** y con el plan B de blancos terrestres
+4. **¿Está de acuerdo con fijar 8 noches como requisito** y con el plan B de blancos terrestres
    si el armado se atrasa?
-6. **Sobre su propuesta de Edge-AI:** ¿la considera trabajo futuro de mi artículo, un proyecto
-   paralelo, o un reemplazo del enfoque actual? Y si llegara a participar, ¿cómo se definiría la
-   autoría?
+5. **¿Desea figurar como coautor del artículo?** Lo pregunto porque la revista exige declarar
+   la contribución de cada autor con la taxonomía CRediT, y necesito saberlo antes de la
+   redacción final.
+6. **¿Cómo prefiere que le reporte los avances?** Propongo una revisión al cierre de cada hito
+   del cronograma, pero me adapto a lo que a usted le resulte práctico.
 
-Quedo atenta a sus observaciones. Todo el material (diseño mecánico, código, datos de
-simulación y documentación de las decisiones con su fecha) está disponible para su revisión
-cuando lo considere oportuno.
+Quedo atenta a sus observaciones, y a su disposición para reunirnos cuando lo considere
+oportuno.
 
 Atentamente,
 

@@ -16,7 +16,7 @@ final. Cada conversación que cambie algo relevante actualiza este archivo.
 **proyecto final de titulación** de Nashla; cuando ella dice "tesis" se refiere a esto, no a un
 documento por capítulos.
 Autora: Nashla Carolina Tuma Zambrano, Ingeniería de Software, PUCE Sede Manabí.
-Tutor: Ing. Diego Paul Corrales Vargas, Mg.
+Tutor: Ing. Alex Ricauter (desde el 17/11/2026). Tutor anterior: Ing. Diego Paul Corrales Vargas, Mg.
 
 **Plazo: 15 semanas** desde el 2026-11-06 → termina alrededor del **19/02/2027**.
 
@@ -275,3 +275,24 @@ real entre enero y abril.
   respuesta a la propuesta de Edge-AI con las cuatro ideas que sí se adoptan y la oferta de que
   su estudio corra sobre esta montura, y **seis preguntas concretas** para que las responda
   punto por punto. La cuarta es la que Nashla pidió: si el aporte es suficiente o debe ampliarse.
+- **2026-11-17:** **cambio de tutor.** El Ing. Alex Ricauter asume la tutoría; el Ing. Diego
+  Paul Corrales Vargas ya no participa en el trabajo.
+  - Se rehace `docs/12-propuesta-para-el-tutor.md` dirigido al Ing. Ricauter. Como es tutor
+    nuevo, el documento ya no da por supuesto el historial: abre con el **estado del trabajo**
+    y se refiere al enfoque anterior como "el enfoque aprobado inicialmente", sin nombrar a
+    quien lo aprobó.
+  - **Se retira del documento la sección sobre la propuesta Edge-AI**, porque era del tutor
+    anterior y no corresponde pedirle a su sucesor que decida sobre ella. Las dos ideas
+    metodológicas que sí se adoptan quedan integradas como decisiones propias: los **cuatro
+    términos del error** (periódico, flexión, refracción, backlash, con la regla de aproximarse
+    siempre desde la misma dirección) en §5, y la **verificación con un procedimiento distinto
+    del que usa el corrector** en §6. La revisión completa de esa propuesta se conserva en
+    `docs/10` como antecedente.
+  - Las preguntas pasan de seis a seis, pero cambian: se fusionan las administrativas, se
+    elimina la de Edge-AI y se agregan dos propias de un tutor nuevo: si desea figurar como
+    coautor (lo pide la taxonomía CRediT de la revista) y cómo prefiere que se le reporten los
+    avances.
+  - En `articulo/generar_articulo.js` se quita el nombre del tutor anterior de la autoría y de
+    la sección CRediT, y queda como marcador pendiente de confirmar.
+  - **Pendiente de Nashla:** confirmar la escritura exacta del apellido del tutor y si lleva
+    título académico (Mg., PhD) para la portada del artículo.
