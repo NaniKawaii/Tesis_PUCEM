@@ -16,7 +16,7 @@ final. Cada conversación que cambie algo relevante actualiza este archivo.
 **proyecto final de titulación** de Nashla; cuando ella dice "tesis" se refiere a esto, no a un
 documento por capítulos.
 Autora: Nashla Carolina Tuma Zambrano, Ingeniería de Software, PUCE Sede Manabí.
-Tutor: Ing. Alex Ricauter (desde el 17/11/2026). Tutor anterior: Ing. Diego Paul Corrales Vargas, Mg.
+Tutor: Ing. Alex Ricaurte (desde el 17/11/2026). Tutor anterior: Ing. Diego Paul Corrales Vargas, Mg.
 
 **Plazo: 15 semanas** desde el 2026-11-06 → termina alrededor del **19/02/2027**.
 
@@ -275,9 +275,9 @@ real entre enero y abril.
   respuesta a la propuesta de Edge-AI con las cuatro ideas que sí se adoptan y la oferta de que
   su estudio corra sobre esta montura, y **seis preguntas concretas** para que las responda
   punto por punto. La cuarta es la que Nashla pidió: si el aporte es suficiente o debe ampliarse.
-- **2026-11-17:** **cambio de tutor.** El Ing. Alex Ricauter asume la tutoría; el Ing. Diego
+- **2026-11-17:** **cambio de tutor.** El Ing. Alex Ricaurte asume la tutoría; el Ing. Diego
   Paul Corrales Vargas ya no participa en el trabajo.
-  - Se rehace `docs/12-propuesta-para-el-tutor.md` dirigido al Ing. Ricauter. Como es tutor
+  - Se rehace `docs/12-propuesta-para-el-tutor.md` dirigido al Ing. Ricaurte. Como es tutor
     nuevo, el documento ya no da por supuesto el historial: abre con el **estado del trabajo**
     y se refiere al enfoque anterior como "el enfoque aprobado inicialmente", sin nombrar a
     quien lo aprobó.

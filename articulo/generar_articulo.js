@@ -84,7 +84,7 @@ const add = (...x) => x.flat().forEach((e) => cuerpo.push(e));
 add(
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 120 }, children: [new TextRun({ text: "Sistema de posicionamiento telescópico con corrección de apuntado mediante aprendizaje automático y control web", bold: true, size: 28 })] }),
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 240 }, children: [new TextRun({ text: "Telescope positioning system with machine-learning pointing correction and web-based control", italics: true })] }),
-  centro("Nashla Carolina Tuma Zambrano¹*, [[Confirmar coautoría del tutor: Ing. Alex Ricauter²]]"),
+  centro("Nashla Carolina Tuma Zambrano¹*, [[Confirmar coautoría del tutor: Ing. Alex Ricaurte²]]"),
   centro("¹ Pontificia Universidad Católica del Ecuador, Sede Manabí, Facultad de Ingeniería, Portoviejo, Ecuador, 130107", { size: 20 }),
   centro("² [[Filiación del tutor: institución, ciudad, país, código postal]]", { size: 20 }),
   centro("ntuma6749@pucesm.edu.ec, ORCID: [[0000-0000-0000-0000]]", { size: 20 }),

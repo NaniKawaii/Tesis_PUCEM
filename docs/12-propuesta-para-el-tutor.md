@@ -1,6 +1,6 @@
 # Propuesta de enfoque del artículo, para revisión del tutor
 
-**Para:** Ing. Alex Ricauter, tutor  
+**Para:** Ing. Alex Ricaurte, tutor  
 **De:** Nashla Carolina Tuma Zambrano · ntuma6749@pucesm.edu.ec  
 **Carrera de Software · Unidad de Integración Curricular · PUCE Sede Manabí**  
 **Fecha:** 17 de noviembre de 2026
