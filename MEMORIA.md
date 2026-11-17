@@ -265,3 +265,13 @@ real entre enero y abril.
     (20/12). Las noches caen sobre Navidad y Año Nuevo.
   - **Bloqueo real identificado:** no se han comprado las poleas GT2, el lazy susan ni la
     cámara. Sin ellos no hay montura y sin montura no hay mediciones.
+- **2026-11-17:** se redacta `docs/12-propuesta-para-el-tutor.md`, la versión formal para enviar
+  al Ing. Corrales, y se sube al Drive como documento aparte. A diferencia de `docs/11`, que
+  está escrito para Nashla, este no menciona el reparto interno del trabajo y va en su voz.
+  Contiene: el antecedente con las tres variantes fallidas y sus números, el aporte, título,
+  pregunta, objetivos e hipótesis propuestos, la decisión de que la IA aprenda el residuo, el
+  diseño experimental con la justificación de las 8 noches, lo que se retira con la consulta
+  administrativa, el estado del prototipo, el cronograma de 13,6 semanas con sus riesgos, la
+  respuesta a la propuesta de Edge-AI con las cuatro ideas que sí se adoptan y la oferta de que
+  su estudio corra sobre esta montura, y **seis preguntas concretas** para que las responda
+  punto por punto. La cuarta es la que Nashla pidió: si el aporte es suficiente o debe ampliarse.
