@@ -504,6 +504,12 @@ en la práctica, con 6 sorteos independientes en simulación (`analisis/e5_trans
 | **6** | 3,78′ | 3,56′ | 5 de 6 sorteos | **0 de 6** |
 | **8** | 3,93′ | 3,50′ | **6 de 6 sorteos** | **4 de 6** |
 
+> **Re-ejecutado el 19/11/2026** con scikit-learn 1.9.1: la fila de 8 noches se reproduce
+> (3,93′ → 3,51′, 6 de 6, 4 con p < 0,05). La de 6 noches da **4 de 6**, no 5 de 6 (3,78′ →
+> 3,57′, 0 significativos): la conclusión no cambia. Y ojo: estos números valen **sobre el
+> arco** donde se entrenó; en todo el cielo el modelo del arco empeora el apuntado. Ver
+> [`13`](13-tema-solido.md) §1.
+
 Con 6 noches el efecto **está, en la dirección correcta, y no se puede demostrar**: ni una vez
 de seis cruzó el umbral. Con 8 cruza cuatro veces de seis.
 

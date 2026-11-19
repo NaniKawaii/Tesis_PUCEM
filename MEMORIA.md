@@ -303,3 +303,26 @@ real entre enero y abril.
   README. **El análisis técnico no cambia** (sigue sin caber en 13 semanas y sigue dejando sin
   uso el hardware comprado); lo que cambia es el peso: no es la idea de un tercero, es la
   dirección que propone el tutor.
+- **2026-11-19 · Reproducibilidad y tema nuevo.**
+  - Una re-ejecución de `e5` dio "1 de 6" en vez de "6 de 6" y pareció que el resultado no se
+    reproducía. **Falsa alarma:** se había corrido con sondeo de 6 puntos. Con los parámetros
+    documentados (`--sondeo 0 --monturas 2 --noches 8`) sale 3,93' → 3,51', 6 de 6, 4 con
+    p < 0,05. La fila de 6 noches da 4 de 6 en vez de 5 de 6 (scikit-learn 1.9.1); se anota en
+    `docs/08`. El documento enviado al Ing. Ricaurte **no necesita corrección**.
+  - `analisis/protocolo_cielo.py` gana `--sondeo` (por defecto 0, la condición del artículo).
+    Su columna "arco" reproduce `e5` exactamente.
+  - **Hallazgo:** entrenado sobre el arco de la Luna, el modelo **empeora** el apuntado en el
+    resto del cielo (15,5-16,7' frente a 12,9' sin corregir). Entrenado con 60 apuntados
+    resueltos por noche en todo el cielo, baja a 6,3-7,3'. En simulación, 8 noches, 6 sorteos.
+  - Con datos de todo el cielo, el corrector aprendido le gana al clásico en 4 de 6 sorteos
+    (1 significativo); con sondeo de 6, en 5 de 6 (2 significativos). Mejora pequeña y no
+    garantizada: queda como pregunta (P2), no como promesa.
+  - Nashla pide un **tema sólido** con lo ya comprado, incluida la **Sony ZV-E10 II + Tamron
+    17-70**, y con objetivo **cuerpos celestes**. Se propone en `docs/13`: calibración por
+    plate solving (ASTAP en la Pi 4) con la Sony, cuatro preguntas (P1 error en todo el
+    cielo, P2 aprendido frente a clásico, P3 Pi frente a nube, P4 arco frente a cielo), y la
+    respuesta que pidió el Ing. Ricaurte: qué le gusta, qué no y qué cambiaría de su propuesta.
+  - Se retira la recomendación de la Pi HQ Camera de `docs/11`: la Sony ya es de Nashla.
+  - **Pendiente:** probar en la semana 1 que la Pi dispara la Sony por USB (SDK de Sony o
+    `gphoto2` en modo PC Remote; con `gphoto2` no hay confirmación publicada).
+

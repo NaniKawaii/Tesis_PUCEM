@@ -7,6 +7,12 @@ pregunta.
 
 Si solo vas a leer una cosa del repositorio, que sea esta.
 
+> ⚠️ **Actualizado el 19/11/2026: el tema cambia, ver [`13-tema-solido.md`](13-tema-solido.md).**
+> Lo de aquí que sigue valiendo: el corrector sobre el residuo, la alineación de sesión, las 8
+> noches y la validación dejando una noche fuera. Lo que **ya no vale**: seguir solo a la Luna
+> (el modelo entrenado en su arco empeora el apuntado en el resto del cielo) y **comprar la Pi
+> HQ Camera** (la Sony ZV-E10 II ya es tuya y sirve mejor para medir con plate solving).
+
 ---
 
 ## 1. Tu artículo, en una frase

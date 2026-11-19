@@ -23,7 +23,7 @@ un efecto que aparece en una semilla no es un resultado.
 
 Uso
 ---
-    python -m analisis.protocolo_cielo --sorteos 6 --noches 4 6 8 --puntos 60
+    python -m analisis.protocolo_cielo --sorteos 6 --noches 6 8 --puntos 60 --sondeo 0
 """
 
 from __future__ import annotations
@@ -54,9 +54,9 @@ PASO_CIELO_S = 60.0  # mover, asentar, exponer y resolver: ~1 minuto por apuntad
 NOCHES_PRUEBA = 2
 
 
-def _noche_arco(equipo, j: int, rng: np.random.Generator):
+def _noche_arco(equipo, j: int, sondeo_n: int, rng: np.random.Generator):
     arranque = INICIO + timedelta(days=3 * j)
-    sondeo = pointings_de_sondeo(arranque, ap.PUNTOS_SONDEO, rng=rng)
+    sondeo = pointings_de_sondeo(arranque, sondeo_n, rng=rng)
     arco = trayectoria_sintetica(
         arranque + timedelta(minutes=10), FILAS_ARCO, paso_s=PASO_ARCO_S,
         az_inicial=float(rng.uniform(0, 360)), alt_inicial=float(rng.uniform(12, 45)))
@@ -64,16 +64,17 @@ def _noche_arco(equipo, j: int, rng: np.random.Generator):
                          nombre_sesion=f"{equipo.identificador}-n{j}", rng=rng)
 
 
-def _noche_cielo(equipo, j: int, puntos: int, rng: np.random.Generator, etiqueta="cielo"):
+def _noche_cielo(equipo, j: int, puntos: int, sondeo_n: int, rng: np.random.Generator,
+                 etiqueta="cielo"):
     """El mismo sondeo inicial que el arco, y luego apuntados por todo el cielo.
 
-    La estructura es idéntica a la del arco a propósito: 6 apuntados dispersos al empezar,
-    que el modelo usa como huella de la sesión, y después los datos. Lo único que cambia
-    entre protocolos es de dónde salen los datos: un arco o todo el cielo.
+    La estructura es idéntica a la del arco a propósito: los mismos apuntados de sondeo al
+    empezar (si los hay) y después los datos. Lo único que cambia entre protocolos es de
+    dónde salen los datos: un arco o todo el cielo.
     """
     arranque = INICIO + timedelta(days=3 * j)
-    sondeo = pointings_de_sondeo(arranque, ap.PUNTOS_SONDEO, rng=rng, paso_s=PASO_CIELO_S)
-    resto = pointings_de_sondeo(arranque + timedelta(minutes=10), puntos - ap.PUNTOS_SONDEO,
+    sondeo = pointings_de_sondeo(arranque, sondeo_n, rng=rng, paso_s=PASO_CIELO_S)
+    resto = pointings_de_sondeo(arranque + timedelta(minutes=10), puntos - sondeo_n,
                                 rng=rng, paso_s=PASO_CIELO_S)
     return generar_noche(equipo, muestrear_sesion(rng), sondeo + resto,
                          nombre_sesion=f"{etiqueta}-n{j}", rng=rng)
@@ -86,7 +87,8 @@ def _cargar(ruta: Path, noches: list) -> ap.Datos:
     return ap.cargar(ruta)
 
 
-def un_sorteo(carpeta: Path, semilla: int, *, noches: int, puntos: int, tipo: str) -> dict:
+def un_sorteo(carpeta: Path, semilla: int, *, noches: int, puntos: int, sondeo: int,
+              tipo: str) -> dict:
     """La misma montura medida con los dos protocolos, más noches de prueba de todo el cielo."""
     # Misma montura y mismas semillas que e5_transferencia, para que la columna del arco
     # reproduzca exactamente su resultado: es la comprobación de que este script mide lo
@@ -97,21 +99,19 @@ def un_sorteo(carpeta: Path, semilla: int, *, noches: int, puntos: int, tipo: st
     rng_prueba = np.random.default_rng(semilla + 4)
 
     arco = _cargar(carpeta / f"arco{semilla}.csv",
-                   [_noche_arco(mia, j, rng_arco) for j in range(noches)])
+                   [_noche_arco(mia, j, sondeo, rng_arco) for j in range(noches)])
     cielo = _cargar(carpeta / f"cielo{semilla}.csv",
-                    [_noche_cielo(mia, j, puntos, rng_cielo) for j in range(noches)])
+                    [_noche_cielo(mia, j, puntos, sondeo, rng_cielo) for j in range(noches)])
     # Noches de prueba: sesiones nuevas, apuntados por todo el cielo, nunca vistas al entrenar.
     prueba = _cargar(carpeta / f"prueba{semilla}.csv",
-                     [_noche_cielo(mia, 100 + j, puntos, rng_prueba, "prueba")
+                     [_noche_cielo(mia, 100 + j, puntos, sondeo, rng_prueba, "prueba")
                       for j in range(NOCHES_PRUEBA)])
 
-    # Los tres conjuntos con el sondeo como características, igual que e5_transferencia.
-    # Medido el 19/11/2026: sin esas características el corrector aprendido **pierde**
-    # contra el clásico en los dos protocolos. El sondeo no es opcional: es la huella de la
-    # sesión que el modelo necesita para adaptarse a cada noche.
-    arco_p, _ = ap.preparar(arco, ap.PUNTOS_SONDEO)
-    cielo_p, _ = ap.preparar(cielo, ap.PUNTOS_SONDEO)
-    prueba_p, _ = ap.preparar(prueba, ap.PUNTOS_SONDEO)
+    # Los tres conjuntos se preparan igual. Con --sondeo 0 la columna del arco es
+    # exactamente la condición del resultado del artículo (docs/08: --sondeo 0 --monturas 2).
+    arco_p, _ = ap.preparar(arco, sondeo)
+    cielo_p, _ = ap.preparar(cielo, sondeo)
+    prueba_p, _ = ap.preparar(prueba, sondeo)
 
     r = {"semilla": semilla}
     for nombre, datos in (("arco", arco_p), ("cielo", cielo_p)):
@@ -154,18 +154,20 @@ def main(argv: list[str] | None = None) -> int:
     pa.add_argument("--sorteos", type=int, default=6)
     pa.add_argument("--noches", type=int, nargs="+", default=[4, 6, 8])
     pa.add_argument("--puntos", type=int, default=60, help="apuntados por noche (protocolo cielo)")
+    pa.add_argument("--sondeo", type=int, default=0,
+                    help="apuntados de sondeo al empezar cada noche; 0 = condición del artículo")
     pa.add_argument("--modelo", default="boosting", choices=[t for t in ap.TIPOS if t != "clasico"])
     pa.add_argument("--datos", default=None)
     a = pa.parse_args(argv)
 
     carpeta = Path(a.datos) if a.datos else Path(__file__).resolve().parent.parent / "datos" / "cielo"
     carpeta.mkdir(parents=True, exist_ok=True)
-    print(f"Protocolo arco (sondeo {ap.PUNTOS_SONDEO} + {FILAS_ARCO} filas) frente a protocolo cielo "
+    print(f"Protocolo arco (sondeo {a.sondeo} + {FILAS_ARCO} filas) frente a protocolo cielo "
           f"({a.puntos} apuntados/noche) · modelo {a.modelo} · {a.sorteos} sorteos")
 
     for noches in a.noches:
         filas = [un_sorteo(carpeta, 20261107 + i * 101, noches=noches, puntos=a.puntos,
-                           tipo=a.modelo) for i in range(a.sorteos)]
+                           sondeo=a.sondeo, tipo=a.modelo) for i in range(a.sorteos)]
         _resumen(filas, noches)
     return 0
 
