@@ -1,8 +1,14 @@
 # Paso 10 · Revisión de la propuesta "Edge-AI en hardware embebido"
 
-Documento recibido del Ing. Corrales el **16/11/2026**: *"Edge-AI en hardware embebido de
-bajo coste para el apuntado autónomo de objetos celestes: estudio comparativo de inferencia
-en CPU, acelerador y nube"* (v3, 15 páginas, 31 referencias).
+Documento recibido el **16/11/2026**: *"Edge-AI en hardware embebido de bajo coste para el
+apuntado autónomo de objetos celestes: estudio comparativo de inferencia en CPU, acelerador
+y nube"* (v3, 15 páginas, 31 referencias).
+
+> ⚠️ **Corrección del 19/11/2026.** Esta revisión se escribió atribuyendo la propuesta al
+> Ing. Corrales. **Es del Ing. Alex Ricaurte**, el tutor actual, según él mismo confirma en
+> una nota de voz del 18/11: *"la propuesta que yo le envío"*, *"ahí le cambié"*. El análisis
+> técnico no cambia; lo que cambia es el peso de la decisión, porque no es la idea de un
+> tercero sino la dirección que propone el tutor. Ver `docs/13`.
 
 > **En una línea:** es una propuesta sólida y bien escrita, pero **es otro proyecto**, no una
 > versión mejorada de este. Pide **6 meses** y tú tienes **15 semanas**. Hay **cinco ideas**
@@ -71,7 +77,7 @@ cerradas de 610 y 280 mm**, calculadas para tus reducciones de 14:1 y 5:1.
 Pi 5 (80), 2 NEMA 17 (30), 2 TMC2209 (15), Camera Module 3 (25), guía de 50 mm (55),
 mecánica 2020 (50), alimentación e INA219 (28), Hailo-8L (70).
 
-> La propuesta marca la Pi 5 y los NEMA 17 como "en posesión". Son del Ing. Corrales, no
+> La propuesta marca la Pi 5 y los NEMA 17 como "en posesión". Son del Ing. Ricaurte, no
 > tuyos: tú tienes una Pi 4 y dos NEMA 23.
 
 Y haría falta además: una **cuenta AWS** con facturación, un **PC x86_64 con Linux** para
@@ -192,9 +198,9 @@ artículo, y ninguna cuesta dinero ni tiempo de campo.
 cámara y visión por computadora; esta propuesta es la continuación natural de esa frase, y
 citarla como línea futura suma para los dos.
 
-### Para la conversación con el Ing. Corrales
+### Para la conversación con el tutor
 
-Ya tenías **pendiente hablar con él** del aporte, la pregunta, H3, el objetivo general, el
+Ya tenías **pendiente hablar con el tutor** del aporte, la pregunta, H3, el objetivo general, el
 objetivo 4 y el título ([`08`](08-diseno-definitivo.md) §13, pendiente 1). Esta propuesta cae
 justo en esa conversación, así que conviene llevar las dos cosas juntas y aclarar:
 

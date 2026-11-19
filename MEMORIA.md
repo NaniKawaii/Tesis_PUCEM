@@ -296,3 +296,10 @@ real entre enero y abril.
     la sección CRediT, y queda como marcador pendiente de confirmar.
   - **Pendiente de Nashla:** confirmar la escritura exacta del apellido del tutor y si lleva
     título académico (Mg., PhD) para la portada del artículo.
+- **2026-11-19 · CORRECCIÓN:** la propuesta Edge-AI del 16/11 **es del Ing. Alex Ricaurte**, el
+  tutor actual, no del Ing. Corrales. La atribución anterior fue una inferencia equivocada al
+  revisarla; Nashla confirma que solo trabaja con Ricaurte. Él mismo lo dice en una nota de voz
+  del 18/11: *"la propuesta que yo le envío"*, *"ahí le cambié"*. Se corrige `docs/10` y el
+  README. **El análisis técnico no cambia** (sigue sin caber en 13 semanas y sigue dejando sin
+  uso el hardware comprado); lo que cambia es el peso: no es la idea de un tercero, es la
+  dirección que propone el tutor.

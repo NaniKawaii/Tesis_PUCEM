@@ -14,7 +14,7 @@
 | [`docs/07-rubrica-lector.md`](docs/07-rubrica-lector.md) | **La rúbrica del lector**: cómo se calcula la nota (máximo 30 puntos), dónde está el peso y qué debe decir cada sección para que el ítem salga "Sí" |
 | [`docs/08-diseno-definitivo.md`](docs/08-diseno-definitivo.md) | ⭐ **Diseño definitivo del artículo**: el aporte, la brecha confirmada en Scopus, la arquitectura de la IA, el simulador, los experimentos, la estadística y el cronograma de 15 semanas |
 | [`docs/09-manos-a-la-obra.md`](docs/09-manos-a-la-obra.md) | ⭐ **Quién hace qué y en qué orden**: los tres frentes en paralelo, los módulos de software por escribir, tus pasos semana a semana y las medidas que hacen falta |
-| [`docs/10-revision-propuesta-edge-ai.md`](docs/10-revision-propuesta-edge-ai.md) | **Revisión de la propuesta Edge-AI del Ing. Corrales**: por qué es otro proyecto, qué costaría cambiarse y las cinco ideas que sí conviene adoptar |
+| [`docs/10-revision-propuesta-edge-ai.md`](docs/10-revision-propuesta-edge-ai.md) | **Revisión de la propuesta Edge-AI del tutor**: por qué es otro proyecto, qué costaría cambiarse y las cinco ideas que sí conviene adoptar |
 | [`docs/11-tu-articulo-en-una-pagina.md`](docs/11-tu-articulo-en-una-pagina.md) | ⭐ **EMPIEZA AQUÍ**: el aporte, el título, la pregunta, las hipótesis, la cámara, el cronograma desde hoy y lo único que toca esta semana |
 | [`docs/12-propuesta-para-el-tutor.md`](docs/12-propuesta-para-el-tutor.md) | **Documento formal para el tutor** (Ing. Alex Ricaurte): estado del trabajo, propuesta de enfoque y seis preguntas concretas para que responda |
 | [`MEMORIA.md`](MEMORIA.md) | **Decisiones vigentes** del artículo, con su historial fechado |
