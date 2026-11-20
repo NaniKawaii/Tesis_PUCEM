@@ -18,6 +18,7 @@
 | [`docs/11-tu-articulo-en-una-pagina.md`](docs/11-tu-articulo-en-una-pagina.md) | Resumen del 16/11 (**reemplazado en parte por `docs/13`**): el aporte, el título, la pregunta, las hipótesis, la cámara, el cronograma desde hoy y lo único que toca esta semana |
 | [`docs/12-propuesta-para-el-tutor.md`](docs/12-propuesta-para-el-tutor.md) | **Documento formal para el tutor** (Ing. Alex Ricaurte): estado del trabajo, propuesta de enfoque y seis preguntas concretas para que responda |
 | [`docs/13-tema-solido.md`](docs/13-tema-solido.md) | ⭐ **El tema nuevo (19/11)**: cuerpos celestes con plate solving y la Sony, por qué el diseño de la Luna no sirve fuera del arco, y la respuesta para el Ing. Ricaurte (qué me gusta, qué no, qué cambio) |
+| [`docs/14-respuesta-ricaurte-titulo-y-hardware.md`](docs/14-respuesta-ricaurte-titulo-y-hardware.md) | Título con tecnologías (Edge-AI, CPU embebida, nube) y revisión del `hardware.zip` del Ing. Ricaurte, con el mensaje listo para enviarle |
 | [`MEMORIA.md`](MEMORIA.md) | **Decisiones vigentes** del artículo, con su historial fechado |
 | [`articulo/`](articulo/LEEME.md) | **Artículo científico v2** en Word con el formato de la revista Esprint |
 | [`circuito/`](circuito/LEEME.md) | **Esquema de conexiones**, tabla pin por pin, configuración de los TB6600, prueba de banco paso a paso y **plano de cableado dentro de la caja** |

@@ -336,3 +336,15 @@ real entre enero y abril.
   búsqueda, y el de SONG tiene el orden de autores en duda (la ficha de SPIE pone como primer
   autor a Zhaojin Cao). Nashla tiene otro lente "similar" al Tamron 17-70; falta la focal exacta
   para la Metodología, no para la Introducción.
+- **2026-11-20 · El tutor pide tecnologías en el título.** Ricaurte responde a los títulos de
+  `docs/13`: hay que sumar tecnologías "como te pasé". Reenvía su `Propuesta_Final_v3_ES.docx`
+  (idéntico byte por byte al del 19/11) y un `hardware.zip` nuevo con su montura: Pi 5, 2 NEMA
+  17 en acople directo, TMC2209, Camera Module 3 con guía de 200 mm, extrusión 2020, Hailo-8L
+  opcional; carrito de USD 200 (+70 el Hailo). Se escribe `docs/14`: título con su estructura
+  (opción A: *Edge-AI en hardware embebido de bajo costo... resolución astrométrica en CPU
+  embebida frente a la nube y corrección del error con aprendizaje automático*), qué se
+  adopta (INA219, condensadores de 100 µF, contrapeso, equilibrar primero, rocío) y qué no
+  (cámara y guía: la Sony da 11-15"/px; los NEMA 17 directos solo mueven ~0,9 kg con el
+  centro de masa a < 3 cm del eje; la correa ya está en la montura de Nashla; Hailo). La
+  Introducción pasa a ese título, con "edge computing" nombrado y el corrector ejecutado en la
+  Pi, para que "Edge-AI" quede sustentado.
