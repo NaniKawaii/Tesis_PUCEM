@@ -326,3 +326,13 @@ real entre enero y abril.
   - **Pendiente:** probar en la semana 1 que la Pi dispara la Sony por USB (SDK de Sony o
     `gphoto2` en modo PC Remote; con `gphoto2` no hay confirmación publicada).
 
+- **2026-11-20 · Título e Introducción del tema nuevo.** Nashla tiene que entregar la
+  Introducción el viernes de la semana siguiente. Se escribe con el tema de `docs/13` en
+  `articulo/generar_introduccion.js` → `introduccion_v3.docx` (917 palabras, 12 referencias, una
+  cita o más por párrafo de antecedentes, oraciones cortas por el ítem 6 de la rúbrica).
+  Referencias nuevas verificadas: Shi et al. (2016, edge computing), Kleijn (ASTAP) y Bergerhoff
+  (2024), citado por su versión de arXiv porque no se pudo confirmar el DOI de EUSIPCO.
+  **Se descartan dos de `docs/08` §11:** FinalKAN (He et al., 2026) no aparece en ninguna
+  búsqueda, y el de SONG tiene el orden de autores en duda (la ficha de SPIE pone como primer
+  autor a Zhaojin Cao). Nashla tiene otro lente "similar" al Tamron 17-70; falta la focal exacta
+  para la Metodología, no para la Introducción.
